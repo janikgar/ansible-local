@@ -2,4 +2,5 @@
   apt:
     name: "*"
     state: latest
+  become: yes
   when: ansible_os_family == "Debian"
