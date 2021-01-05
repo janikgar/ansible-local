@@ -1,0 +1,8 @@
+---
+- name: Set hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: Set master fact
+  set_fact:
+    k3s_role: "{{ (inventory_hostname == 'picluster-01' ) | ternary('master', 'worker') }}"

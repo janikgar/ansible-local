@@ -1,0 +1,7 @@
+---
+- hosts: picluster
+  order: sorted
+  remote_user: pi
+  roles:
+    - pi-cluster
+  
