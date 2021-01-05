@@ -19,3 +19,23 @@
     owner: pi
     group: pi
     mode: "0444"
+
+- name: Add Ansible user
+  user:
+    name: ansible
+  become: yes
+
+- name: Create Ansible SSH directory
+  file:
+    dest: /home/ansible/.ssh/
+    state: directory
+    owner: ansible
+    group: ansible
+
+- name: Add Ansible SSH key
+  copy:
+    content: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVc79xYhCJ3nUOKADN/+uZ2b0oSR704Lo01HnZLoKLVHUOYpyejHe1zrEZ72heoO+32cx8ZZ2yet8iz4HtFbkVzGeTTien1wuXIq/DRi+NGmb14RImM392A/nAzXAtX/VPqrGl7ajwyU0uDUj5VF1Fh/ZlfqePQPlTM1JqlrXzRSo3jeK3Ha5JQ6x44DhmioqSDKzM40a2LdVCQ2RyFDoiyMuzUiISkmV/Wu62RIrvNvbCvNRNlVD8IGOOs0KrzmVbsmvltSWO+TyvSCCOa03iFttWodw250PYthQhyn4n5mDMhKuw2ZOtxgN26PELHc5EkFCt+dghkhhDH/VMvkz5
+    dest: /home/ansible/.ssh/authorized_keys
+    owner: ansible
+    group: ansible
+    mode: "0444"
