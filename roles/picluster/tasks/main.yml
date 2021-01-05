@@ -1,0 +1,14 @@
+- name: Set password to non-default
+  user:
+    name: pi
+    update_password: always
+    password: $6$wpHezfpR7vZr.eMf$zBL6CJKQ5ITU0aFLlagJziogrXEbvdz5zNCKV9y7ul9z4oCrSy/VbFH6FUGP4ziQLMquHfQSJuZL2u1uy4HdC0
+  become: yes
+
+- name: Add SSH key to authorized_keys
+  copy:
+    src: templates/authorized_keys
+    dest: /home/pi/.ssh/authorized_keys
+    owner: pi
+    group: pi
+    mode: "0444"

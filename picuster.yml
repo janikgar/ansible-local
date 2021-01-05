@@ -1,0 +1,5 @@
+---
+- hosts: picluster
+  roles:
+    - picluster
+    - packages
