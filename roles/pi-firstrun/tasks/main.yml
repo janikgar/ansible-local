@@ -31,6 +31,7 @@
     state: directory
     owner: ansible
     group: ansible
+  become: yes
 
 - name: Add Ansible SSH key
   copy:
@@ -39,3 +40,4 @@
     owner: ansible
     group: ansible
     mode: "0444"
+  become: yes
