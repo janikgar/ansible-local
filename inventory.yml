@@ -5,11 +5,11 @@ all:
         picluster-01:
           ansible_host: 192.168.1.55
         picluster-02:
-          ansible_host: 192.168.1.58
+          ansible_host: 192.168.1.57
         picluster-03:
-          ansible_host: 192.168.1.62
+          ansible_host: 192.168.1.58
         picluster-04:
-          ansible_host: 192.168.1.64
+          ansible_host: 192.168.1.62
     linux:
       hosts:
         synology.home.local:
