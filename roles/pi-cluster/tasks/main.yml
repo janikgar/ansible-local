@@ -1,20 +1,20 @@
 ---
 - name: Get hostname
-  shell: "raspi-config nonint get_hostname"
+  shell: "sudo raspi-config nonint get_hostname"
   register: pi_hostname
   changed_when: False
 
 - name: Set hostname
-  shell: "raspi-config nonint do_hostname {{ inventory_hostname }}"
+  shell: "sudo raspi-config nonint do_hostname {{ inventory_hostname }}"
   when: pi_hostname.stdout != inventory_hostname
 
 - name: Check if FS is expandable
-  shell: "raspi-config nonint get_can_expand"
+  shell: "sudo raspi-config nonint get_can_expand"
   register: fs_filled
   changed_when: False
 
 - name: Expand Filesystem
-  shell: "raspi-config nonint do_expand_rootfs"
+  shell: "sudo raspi-config nonint do_expand_rootfs"
   when: fs_filled.stdout != '0'
 
 - name: Setup LEDs (part 1)

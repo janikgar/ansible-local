@@ -4,4 +4,3 @@
   remote_user: ansible
   roles:
     - pi-cluster
-  become: yes
