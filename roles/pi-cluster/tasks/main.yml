@@ -1,11 +1,33 @@
 ---
-# - name: Set hostname
-#   hostname:
-#     name: "{{ inventory_hostname }}"
-- name: Get facts
-  debug:
-    msg: "{{ ansible_facts }}"
+- name: Get hostname
+  shell: "raspi-config nonint get_hostname"
+  register: pi_hostname
+  changed_when: False
+
+- name: Set hostname
+  shell: "raspi-config nonint do_hostname {{ inventory_hostname }}"
+  when: pi_hostname.stdout != inventory_hostname
+
+- name: Check if FS is expandable
+  shell: "raspi-config nonint get_can_expand"
+  register: fs_filled
+  changed_when: False
+
+- name: Expand Filesystem
+  shell: "raspi-config nonint do_expand_rootfs"
+  when: fs_filled.stdout != '0'
+
+- name: Setup LEDs (part 1)
+  shell: "echo mmc1 > /sys/class/leds/led0"
+
+- name: Setup LEDs (part 2)
+  shell: "echo cpu > /sys/class/leds/led1"
 
 - name: Set master fact
   set_fact:
     k3s_role: "{{ (inventory_hostname == 'picluster-01' ) | ternary('master', 'worker') }}"
+
+- name: Reboot for file system expansion
+  reboot:
+    reboot_timeout: 600
+  when: fs_filled.stdout != '0'
