@@ -1,6 +1,6 @@
 ---
 - hosts: picluster
   order: sorted
-  remote_user: pi
+  remote_user: ansible
   roles:
     - pi-cluster
