@@ -1,7 +1,10 @@
 ---
-- name: Set hostname
-  hostname:
-    name: "{{ inventory_hostname }}"
+# - name: Set hostname
+#   hostname:
+#     name: "{{ inventory_hostname }}"
+- name: Get facts
+  debug:
+    msg: "{{ ansible_facts }}"
 
 - name: Set master fact
   set_fact:
