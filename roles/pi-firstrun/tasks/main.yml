@@ -23,6 +23,8 @@
 - name: Add Ansible user
   user:
     name: ansible
+    groups: 
+      - sudo
   become: yes
 
 - name: Create Ansible SSH directory
