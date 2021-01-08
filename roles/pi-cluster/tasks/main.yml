@@ -18,10 +18,10 @@
   when: fs_filled.stdout != '0'
 
 - name: Setup LEDs (part 1)
-  shell: "echo mmc1 > /sys/class/leds/led0"
+  shell: "echo mmc1 > /sys/class/leds/led0/trigger"
 
 - name: Setup LEDs (part 2)
-  shell: "echo cpu > /sys/class/leds/led1"
+  shell: "echo cpu > /sys/class/leds/led1/trigger"
 
 - name: Set master fact
   set_fact:
