@@ -43,3 +43,12 @@
     group: ansible
     mode: "0444"
   become: yes
+
+- name: Add Ansible NOPASSWD sudo
+  copy:
+    content: "ansible ALL=(ALL) NOPASSWD: ALL"
+    dest: /etc/sudoers.d/010_ansible-nopasswd
+    owner: root
+    group: root
+    mode: "0400"
+  become: yes

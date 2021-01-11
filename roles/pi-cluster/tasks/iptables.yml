@@ -1,0 +1,60 @@
+---
+- name: Flush tables
+  shell: iptables -F
+
+- name: Accept localhost
+  iptables:
+    chain: INPUT
+    in_interface: lo
+    jump: ACCEPT
+
+- name: Accept LAN TCP traffic on ports
+  with_nested:
+    - "{{ lan_ips }}"
+    - "{{ security_groups }}"
+  iptables:
+    chain: INPUT
+    source: "{{ item[0] }}"
+    protocol: tcp
+    destination_port: "{{ item[1].port }}"
+    comment: "Allow LAN traffic to {{ item[1].comment }}"
+    jump: ACCEPT
+
+- name: Accept LAN UDP traffic on ports
+  with_nested:
+    - "{{ lan_ips }}"
+    - "{{ security_groups }}"
+  iptables:
+    chain: INPUT
+    source: "{{ item[0] }}"
+    protocol: udp
+    destination_port: "{{ item[1].port }}"
+    comment: "Allow LAN traffic to {{ item[1].comment }}"
+    jump: ACCEPT
+
+- name: Accept all traffic on HTTP/S ports
+  loop:
+  - { port: "80", comment: "HTTP" }
+  - { port: "443", comment: "HTTPS" }
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ item.port }}"
+    comment: "Allow all traffic to {{ item.comment }}"
+    jump: ACCEPT
+
+- name: Reject other LAN traffic
+  loop: "{{ lan_ips }}"
+  iptables:
+    chain: INPUT
+    protocol: all
+    source: "{{ item }}"
+    comment: "Reject other LAN traffic"
+    jump: REJECT
+
+- name: Drop other external traffic
+  iptables:
+    chain: INPUT
+    protocol: all
+    comment: "Drop other traffic"
+    jump: DROP

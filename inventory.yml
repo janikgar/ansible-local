@@ -4,12 +4,16 @@ all:
       hosts:
         picluster-01:
           ansible_host: 192.168.1.55
+          k3s_role: master
         picluster-02:
           ansible_host: 192.168.1.57
+          k3s_role: worker
         picluster-03:
-          ansible_host: 192.168.1.58
+          ansible_host: 192.168.1.64
+          k3s_role: worker
         picluster-04:
           ansible_host: 192.168.1.62
+          k3s_role: worker
     linux:
       hosts:
         synology.home.local:

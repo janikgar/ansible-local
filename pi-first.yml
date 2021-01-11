@@ -4,5 +4,10 @@
   remote_user: pi
   roles:
     - pi-firstrun
+
+- hosts: picluster
+  order: sorted
+  remote_user: ansible
+  roles:
     - packages
-  
+  become: yes

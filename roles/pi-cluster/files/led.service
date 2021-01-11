@@ -1,0 +1,10 @@
+[Unit]
+Description=Setup Raspberry Pi LEDs
+# After=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+ExecStart=sh -c "echo cpu > /sys/class/leds/led0/trigger; echo mmc0 > /sys/class/leds/led1/trigger"
+RemainAfterExit=true

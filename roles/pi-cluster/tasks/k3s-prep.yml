@@ -1,0 +1,40 @@
+---
+- name: Check if IP4 needs changes
+  shell: "update-alternatives --query iptables | grep Value | cut -f2 -d' '"
+  register: ip4_current
+  changed_when: false
+
+- name: Flush NF IP4tables
+  shell: iptables -F
+  when: ip4_current != "/usr/sbin/iptables-legacy"
+
+- name: Set IP4Tables to legacy
+  community.general.alternatives:
+    name: iptables
+    path: /usr/sbin/iptables-legacy
+  register: ip4_changed
+  changed_when: false
+  when: ip4_current != "/usr/sbin/iptables-legacy"
+  
+- name: Check if IP6 needs changes
+  shell: update-alternatives --query ip6tables | grep Value | cut -f2 -d' '
+  register: ip6_current
+  changed_when: false
+
+- name: Flush NF IP6tables
+  shell: ip6tables -F
+  when: ip6_current != "/usr/sbin/ip6tables-legacy"
+
+- name: Set IP6Tables to legacy
+  community.general.alternatives:
+    name: ip6tables
+    path: /usr/sbin/ip6tables-legacy
+  register: ip6_changed
+  changed_when: false
+  when: ip6_current != "/usr/sbin/ip6tables-legacy"
+
+- name: Reboot
+  reboot:
+    reboot_timeout: 300
+  when: ip4_changed.changed or ip6_changed.changed
+    

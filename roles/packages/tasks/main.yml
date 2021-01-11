@@ -1,6 +1,18 @@
-- name: Update packages through apt
-  apt:
-    name: "*"
-    state: latest
-  become: yes
-  when: ansible_os_family == "Debian"
+- name: Upgrade packages with rescue
+  block:
+  - name: Update packages through apt
+    apt:
+      name: "*"
+      state: latest
+    become: yes
+    when: ansible_os_family == "Debian"
+  rescue:
+  - name: Wait 10 seconds
+    wait_for:
+      timeout: 10
+  - name: Update packages through apt (2nd attempt)
+    apt:
+      name: "*"
+      state: latest
+    become: yes
+    when: ansible_os_family == "Debian"

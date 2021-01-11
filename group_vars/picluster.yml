@@ -1,0 +1,13 @@
+---
+lan_ips:
+  - 192.168.0.0/16
+  - 172.16.0.0/12
+  - 10.0.0.0/8
+
+security_groups:
+  - { port: "22", comment: "SSH" }
+  - { port: "2379", comment: "ETCD" }
+  - { port: "2380", comment: "ETCD" }
+  - { port: "6443", comment: "Kubernetes" }
+  - { port: "8472", comment: "Flannel VXLAN" }
+  - { port: "10250", comment: "Metrics Server" }
