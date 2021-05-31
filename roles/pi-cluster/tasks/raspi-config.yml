@@ -17,6 +17,9 @@
   shell: "raspi-config nonint do_expand_rootfs"
   when: fs_filled.stdout != '0'
 
+- name: Set GPU memory split
+  shell: raspi-config nonint do_memory_split 16
+
 - name: Add rc.local
   copy:
     src: rc.local

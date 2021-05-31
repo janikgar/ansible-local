@@ -32,8 +32,9 @@
     comment: "Allow LAN traffic to {{ item[1].comment }}"
     jump: ACCEPT
 
-- name: Accept all traffic on HTTP/S ports
+- name: Accept all traffic on DNS, HTTP/S ports
   loop:
+  - { port: "53", comment: "DNS" }
   - { port: "80", comment: "HTTP" }
   - { port: "443", comment: "HTTPS" }
   iptables:
@@ -58,3 +59,10 @@
     protocol: all
     comment: "Drop other traffic"
     jump: DROP
+  
+- name: Save iptables
+  shell: iptables-save
+
+- name: Restart
+  reboot:
+    reboot_timeout: 300

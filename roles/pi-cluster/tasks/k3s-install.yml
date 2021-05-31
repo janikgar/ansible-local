@@ -1,0 +1,56 @@
+---
+- name: Check K3s roles
+  debug:
+    msg: "{{ ansible_host }}: {{ k3s_role }}"
+
+- name: Install Arkade
+  shell: curl -sLS https://dl.get-arkade.dev | sudo sh
+
+- name: Download K3s script
+  uri:
+    url: https://get.k3s.io/
+    return_content: yes
+  register: k3s_install
+  delegate_to: localhost
+  become: no
+
+- name: Add script to nodes
+  copy:
+    content: "{{ k3s_install.content }}"
+    dest: "/tmp/k3s_install"
+    owner: root
+    group: root
+    mode: "0500"
+
+- name: Install on master
+  shell: |-
+    export INSTALL_K3S_VERSION={{ k3s_version }}
+    /tmp/k3s_install
+  when: k3s_role == 'master'
+
+- name: Get agent join token
+  shell: cat /var/lib/rancher/k3s/server/node-token
+  register: node_token
+  delegate_facts: true
+  delegate_to: picluster-04
+
+- name: Get master node url
+  set_fact:
+    master_url: "{{ ansible_facts.default_ipv4.address }}"
+  delegate_to: picluster-04
+
+- name: Install servers
+  shell: |-
+    export K3S_TOKEN={{ node_token.stdout }}
+    export INSTALL_K3S_VERSION={{ k3s_version }}
+    env
+    /tmp/k3s_install --server https://{{ hostvars['picluster-04']['ansible_facts']['default_ipv4']['address'] }}:6443
+  when: k3s_role == 'server'
+
+- name: Install agents
+  shell: |-
+    export K3S_URL=https://{{ hostvars['picluster-04']['ansible_facts']['default_ipv4']['address'] }}:6443
+    export K3S_TOKEN={{ node_token.stdout }}
+    export INSTALL_K3S_VERSION={{ k3s_version }}
+    /tmp/k3s_install
+  when: k3s_role == 'agent'

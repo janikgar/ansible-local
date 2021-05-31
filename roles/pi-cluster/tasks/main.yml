@@ -1,9 +1,12 @@
 ---
-# - name: Raspi Config setup
-#   include_tasks: raspi-config.yml
+- name: Raspi Config setup
+  include_tasks: raspi-config.yml
 
-# - name: K3s Prep
-#   include_tasks: k3s-prep.yml
+- name: K3s Prep
+  include_tasks: k3s-prep.yml
 
 - name: Security Groups
   include_tasks: iptables.yml
+
+- name: K3s Install
+  include_tasks: k3s-install.yml
