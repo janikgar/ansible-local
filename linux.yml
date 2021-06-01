@@ -1,4 +1,6 @@
 ---
-- hosts: linux
+- hosts:
+    - linux
+    - picluster
   roles:
     - packages

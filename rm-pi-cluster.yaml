@@ -3,5 +3,5 @@
   order: sorted
   remote_user: ansible
   roles:
-    - pi-cluster
-  become: yes
+    - remove-pi-cluster
+  # become: yes

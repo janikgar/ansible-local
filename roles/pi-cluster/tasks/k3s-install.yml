@@ -3,8 +3,22 @@
   debug:
     msg: "{{ ansible_host }}: {{ k3s_role }}"
 
+- name: Check for Arkade
+  command: which arkade
+  register: arkade_present
+
 - name: Install Arkade
   shell: curl -sLS https://dl.get-arkade.dev | sudo sh
+  when: arkade_present.failed == true
+
+# - name: Get Service facts
+#   service_facts: {}
+
+# - name: Check for K3s
+#   set_fact:
+#     k3s_running: "{{ ansible_facts['services']['k3s.service'] == 'running' | default(false) }}"
+#   register: k3s_running
+#   when: k3s_role != 'agent'
 
 - name: Download K3s script
   uri:
@@ -13,6 +27,7 @@
   register: k3s_install
   delegate_to: localhost
   become: no
+  run_once: yes
 
 - name: Add script to nodes
   copy:
@@ -22,35 +37,55 @@
     group: root
     mode: "0500"
 
-- name: Install on master
-  shell: |-
-    export INSTALL_K3S_VERSION={{ k3s_version }}
-    /tmp/k3s_install
-  when: k3s_role == 'master'
+- name: Tasks to initialize leader
+  when: k3s_role == 'leader'
+  block:
+  - name: Add manifests to leader
+    copy:
+      src: "{{ item }}"
+      dest: "/var/lib/rancher/k3s/server/manifests/"
+      owner: root
+      group: root
+      mode: "0400"
+    with_fileglob:
+      - files/*.yaml
 
-- name: Get agent join token
-  shell: cat /var/lib/rancher/k3s/server/node-token
-  register: node_token
-  delegate_facts: true
-  delegate_to: picluster-04
+  - name: Create join token
+    shell: openssl rand -base64 30
+    register: node_token
+    delegate_to: "{{ item }}"
+    loop: "{{ groups['picluster_leader'] }}"
 
-- name: Get master node url
-  set_fact:
-    master_url: "{{ ansible_facts.default_ipv4.address }}"
-  delegate_to: picluster-04
+  - name: Initialize leader
+    command: /tmp/k3s_install --disable traefik --disable local-storage
+    environment:
+      K3S_TOKEN: "{{ node_token['results'][0].item }}"
+      K3S_CLUSTER_INIT: true
+      INSTALL_K3S_VERSION: "{{ k3s_version }}"
+
+  - name: Wait to stabilize
+    command: sleep 10
+    delegate_to: 127.0.0.1
+    become: no
+
+  - name: Get server node url
+    set_fact:
+      server_url: "{{ ansible_facts.default_ipv4.address }}"
+    register: global_server_url
+    delegate_to: "{{ item }}"
+    loop: "{{ groups['picluster_leader'] }}"
 
 - name: Install servers
-  shell: |-
-    export K3S_TOKEN={{ node_token.stdout }}
-    export INSTALL_K3S_VERSION={{ k3s_version }}
-    env
-    /tmp/k3s_install --server https://{{ hostvars['picluster-04']['ansible_facts']['default_ipv4']['address'] }}:6443
+  command: "/tmp/k3s_install --server https://{{ global_server_url['results'][0].item }}:6443"
+  environment:
+    K3S_TOKEN: "{{ node_token['results'][0].item }}"
+    INSTALL_K3S_VERSION: "{{ k3s_version }}"
   when: k3s_role == 'server'
 
 - name: Install agents
-  shell: |-
-    export K3S_URL=https://{{ hostvars['picluster-04']['ansible_facts']['default_ipv4']['address'] }}:6443
-    export K3S_TOKEN={{ node_token.stdout }}
-    export INSTALL_K3S_VERSION={{ k3s_version }}
-    /tmp/k3s_install
+  command: /tmp/k3s_install
+  environment:
+    K3S_URL: "https://{{ global_server_url['results'][0].item }}:6443"
+    K3S_TOKEN: "{{ node_token['results'][0].item }}"
+    INSTALL_K3S_VERSION: "{{ k3s_version }}"
   when: k3s_role == 'agent'

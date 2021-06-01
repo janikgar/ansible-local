@@ -1,25 +1,28 @@
 all:
+  vars:
+    ansible_ssh_pipelining: true
   children:
-    picluster:
+    picluster_leader:
       hosts:
-        picluster-01:
-          ansible_host: 192.168.1.22
-          k3s_role: agent
-        picluster-02:
-          ansible_host: 192.168.1.26
-          k3s_role: agent
-        picluster-03:
-          ansible_host: 192.168.1.19
-          k3s_role: agent
-        picluster-04:
+        picluster-01.home.lan:
+      vars:
+        k3s_role: leader
+    picluster_server:
+      hosts:
+        picluster-02.home.lan:
+        picluster-03.home.lan:
+      vars:
+        k3s_role: server
+    picluster_agent:
+      hosts:
+        picluster-04.home.lan:
           ansible_host: 192.168.1.25
-          k3s_role: master
+      vars:
+        k3s_role: agent
     linux:
       hosts:
-        synology.home.local:
+        synology.home.lan:
           ansible_host: 192.168.1.28
           ansible_port: 8422
-        pi.home.local:
-          ansible_host: 192.168.1.2
-        inspiron.home.local:
+        inspiron.home.lan:
           ansible_host: 192.168.1.16

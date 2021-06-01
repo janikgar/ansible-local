@@ -42,9 +42,9 @@
     enabled: yes
     state: restarted
 
-- name: Set master fact
+- name: Set server fact
   set_fact:
-    k3s_role: "{{ (inventory_hostname == 'picluster-01' ) | ternary('master', 'worker') }}"
+    k3s_role: "{{ (inventory_hostname == 'picluster-01' ) | ternary('server', 'worker') }}"
 
 - name: Reboot for file system expansion
   reboot:
