@@ -31,7 +31,9 @@
     owner: root
     group: root
     mode: "0600"
+  become: yes
 - name: Restart service
   service:
     name: snmpd
     state: restarted
+  become: yes
