@@ -1,3 +1,4 @@
+---
 - name: Upgrade packages with rescue
   block:
   - name: Update packages through apt
@@ -16,3 +17,21 @@
       state: latest
     become: yes
     when: ansible_os_family == "Debian"
+
+- name: Install snmpd
+  apt:
+    name: snmpd
+    state: latest
+  become: yes
+  when: ansible_os_family == "Debian"
+- name: Add snmpd.conf
+  copy:
+    src: snmpd.conf
+    dest: /etc/snmp/snmpd.conf
+    owner: root
+    group: root
+    mode: "0600"
+- name: Restart service
+  service:
+    name: snmpd
+    state: restarted
