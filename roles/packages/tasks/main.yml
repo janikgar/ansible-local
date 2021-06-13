@@ -31,9 +31,10 @@
     mode: 0700
   become: yes
 - name: Ensure Debian-snmp user can execute file
-  lineinfile:
-    path: /etc/sudoers.conf
-    line: "Debian-snmp ALL=(ALL) NOPASSWD: /bin/sh /etc/snmp/raspberry.sh"
+  file:
+    path: /etc/sudoers.d/011-snmp
+    content: "Debian-snmp ALL=(ALL) NOPASSWD: /bin/sh /etc/snmp/raspberry.sh"
+    mode: 0600
   become: yes
 - name: Add snmpd.conf
   copy:
