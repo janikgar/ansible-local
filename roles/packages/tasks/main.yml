@@ -24,6 +24,17 @@
     state: latest
   become: yes
   when: ansible_os_family == "Debian"
+- name: Download and enable Raspberry Pi SNMP Extend
+  get_url:
+    url:  https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/raspberry.sh 
+    dest: /etc/snmp/raspberry.sh
+    mode: 0700
+  become: yes
+- name: Ensure Debian-snmp user can execute file
+  lineinfile:
+    path: /etc/sudoers.conf
+    line: "Debian-snmp ALL=(ALL) NOPASSWD: /bin/sh /etc/snmp/raspberry.sh"
+  become: yes
 - name: Add snmpd.conf
   copy:
     src: snmpd.conf
