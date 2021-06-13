@@ -31,8 +31,8 @@
     mode: 0700
   become: yes
 - name: Ensure Debian-snmp user can execute file
-  file:
-    path: /etc/sudoers.d/011-snmp
+  copy:
+    dest: /etc/sudoers.d/011-snmp
     content: "Debian-snmp ALL=(ALL) NOPASSWD: /bin/sh /etc/snmp/raspberry.sh"
     mode: 0600
   become: yes
