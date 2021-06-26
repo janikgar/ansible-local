@@ -1,6 +1,6 @@
 ---
 - hosts:
-    # - linux
+    - linux
     - picluster_leader:picluster_server:picluster_agent
   roles:
     - packages

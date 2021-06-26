@@ -20,10 +20,13 @@
 
 - name: Install snmpd
   apt:
-    name: snmpd
+    name: "{{ item }}"
     state: latest
   become: yes
   when: ansible_os_family == "Debian"
+  with_items:
+    - snmpd
+    - snmp-mibs-downloader
 - name: Download and enable Raspberry Pi SNMP Extend
   get_url:
     url:  https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/raspberry.sh 
@@ -32,9 +35,9 @@
   become: yes
 - name: Ensure Debian-snmp user can execute file
   copy:
-    dest: /etc/sudoers.d/011-snmp
-    content: "Debian-snmp ALL=(ALL) NOPASSWD: /bin/sh /etc/snmp/raspberry.sh"
-    mode: 0600
+    dest: /etc/sudoers.d/011_snmp
+    content: "Debian-snmp ALL=(ALL) NOPASSWD: /bin/sh /etc/snmp/raspberry.sh\n"
+    mode: 0440
   become: yes
 - name: Add snmpd.conf
   copy:
