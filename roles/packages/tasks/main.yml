@@ -47,8 +47,13 @@
     group: root
     mode: "0600"
   become: yes
-- name: Restart service
-  service:
+- name: Update service command line
+  lineinfile:
+    path: /lib/systemd/system/snmpd.service
+    line: ExecStart=/usr/sbin/snmpd -LS6d -Lf /dev/null -u Debian-snmp -g Debian-snmp -I -smux,mteTrigger,mteTriggerConf -f -p /run/snmpd.pid
+    regexp: '^ExecStart'
+- name: Reload daemon and restart service
+  systemd:
     name: snmpd
+    daemon_reload: yes
     state: restarted
-  become: yes
