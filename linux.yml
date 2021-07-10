@@ -4,3 +4,4 @@
     - picluster_leader:picluster_server:picluster_agent
   roles:
     - packages
+  become: yes

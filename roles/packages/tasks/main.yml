@@ -5,7 +5,6 @@
     apt:
       name: "*"
       state: latest
-    become: yes
     when: ansible_os_family == "Debian"
   rescue:
   - name: Wait 10 seconds
@@ -15,14 +14,12 @@
     apt:
       name: "*"
       state: latest
-    become: yes
     when: ansible_os_family == "Debian"
 
 - name: Install snmpd
   apt:
     name: "{{ item }}"
     state: latest
-  become: yes
   when: ansible_os_family == "Debian"
   with_items:
     - snmpd
@@ -32,13 +29,11 @@
     url:  https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/raspberry.sh 
     dest: /etc/snmp/raspberry.sh
     mode: 0700
-  become: yes
 - name: Ensure Debian-snmp user can execute file
   copy:
     dest: /etc/sudoers.d/011_snmp
     content: "Debian-snmp ALL=(ALL) NOPASSWD: /bin/sh /etc/snmp/raspberry.sh\n"
     mode: 0440
-  become: yes
 - name: Add snmpd.conf
   copy:
     src: snmpd.conf
@@ -46,7 +41,6 @@
     owner: root
     group: root
     mode: "0600"
-  become: yes
 - name: Update service command line
   lineinfile:
     path: /lib/systemd/system/snmpd.service
