@@ -8,6 +8,7 @@ spec:
   chart: ingress-nginx
   targetNamespace: kube-system
   version: "3.31.0"
-  set:
-    controller.extraArgs: |-
-      default-ssl-certifacte: default/star-home-lan
+  valuesContent: |-
+    controller:
+      extraArgs:
+        default-ssl-certifacte: default/star-home-lan
