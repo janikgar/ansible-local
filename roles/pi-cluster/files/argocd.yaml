@@ -8,5 +8,19 @@ spec:
   chart: argo-cd
   targetNamespace: argocd
   version: "3.6.4"
-  set:
-    global.image.repository: alinbalutoiu/argocd
+  valuesContent: |-
+    global:
+      image:
+        repository: alinbalutoiu/argocd
+    controller:
+      logFormat: json
+    server:
+      logFormat: json
+      extraArgs:
+        - --insecure
+      ingress:
+        enabled: true
+        hosts:
+          - argocd.home.lan
+    repoServer:
+      logFormat: json
