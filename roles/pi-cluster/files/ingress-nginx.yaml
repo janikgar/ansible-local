@@ -11,4 +11,4 @@ spec:
   valuesContent: |-
     controller:
       extraArgs:
-        default-ssl-certifacte: default/star-home-lan
+        default-ssl-certificate: default/star-home-lan
