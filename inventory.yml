@@ -5,29 +5,27 @@ all:
     picluster_leader:
       hosts:
         picluster-04.home.lan:
-          ansible_host: 192.168.1.25
-        # picluster-01.home.lan:
-        #   ansible_host: 192.168.1.22
+          ansible_host: 192.168.1.104
       vars:
         k3s_role: leader
     picluster_server:
       hosts:
         picluster-02.home.lan:
-          ansible_host:  192.168.1.19
+          ansible_host: 192.168.1.102
         picluster-03.home.lan:
-          ansible_host: 192.168.1.26
+          ansible_host: 192.168.1.103
+        picluster-01.home.lan:
+          ansible_host: 192.168.1.101
       vars:
         k3s_role: server
     picluster_agent:
       hosts: {}
-        # picluster-04.home.lan:
-        #   ansible_host: 192.168.1.25
+        #picluster-01.home.lan:
+        #  ansible_host: 192.168.1.101
       vars:
         k3s_role: agent
     linux:
       hosts:
-        pi.home.lan:
-          ansible_host: 192.168.1.2
         synology.home.lan:
           ansible_host: 192.168.1.28
           ansible_port: 8422
