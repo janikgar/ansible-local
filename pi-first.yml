@@ -1,11 +1,11 @@
 ---
-- hosts: pi.home.lan
+- hosts: picluster_leader:picluster_server:pi.home.lan
   order: sorted
   remote_user: pi
   roles:
     - pi-firstrun
 
-- hosts: pi.home.lan
+- hosts: picluster_leader:picluster_server:pi.home.lan
   order: sorted
   remote_user: ansible
   roles:

@@ -6,6 +6,7 @@
 - name: Check for Arkade
   command: which arkade
   register: arkade_present
+  ignore_errors: yes
 
 - name: Install Arkade
   shell: curl -sLS https://dl.get-arkade.dev | sudo sh
@@ -59,6 +60,7 @@
   - name: Initialize leader
     command: /tmp/k3s_install --disable traefik --disable local-storage
     environment:
+      K3S_DATASTORE_ENDPOINT: "mysql://etcd:{{ vault_ETCD_PASSWORD }}@tcp(192.168.1.28:3307)/etcd"
       K3S_TOKEN: "{{ node_token['results'][0].item }}"
       K3S_CLUSTER_INIT: true
       INSTALL_K3S_VERSION: "{{ k3s_version }}"
@@ -78,6 +80,7 @@
 - name: Install servers
   command: "/tmp/k3s_install --server https://{{ global_server_url['results'][0].item }}:6443"
   environment:
+    K3S_DATASTORE_ENDPOINT: "mysql://etcd:{{ vault_ETCD_PASSWORD }}@tcp(192.168.1.28:3307)/etcd"
     K3S_TOKEN: "{{ node_token['results'][0].item }}"
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
   when: k3s_role == 'server'
@@ -85,6 +88,7 @@
 - name: Install agents
   command: /tmp/k3s_install
   environment:
+    K3S_DATASTORE_ENDPOINT: "mysql://etcd:{{ vault_ETCD_PASSWORD }}@tcp(192.168.1.28:3307)/etcd"
     K3S_URL: "https://{{ global_server_url['results'][0].item }}:6443"
     K3S_TOKEN: "{{ node_token['results'][0].item }}"
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
