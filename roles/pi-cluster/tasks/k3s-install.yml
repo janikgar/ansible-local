@@ -58,11 +58,10 @@
     loop: "{{ groups['picluster_leader'] }}"
 
   - name: Initialize leader
-    command: /tmp/k3s_install --disable traefik --disable local-storage
+    command: /tmp/k3s_install --disable traefik --disable local-storage server
     environment:
       K3S_DATASTORE_ENDPOINT: "mysql://etcd:{{ vault_ETCD_PASSWORD }}@tcp(192.168.1.28:3307)/etcd"
       K3S_TOKEN: "{{ node_token['results'][0].item }}"
-      K3S_CLUSTER_INIT: true
       INSTALL_K3S_VERSION: "{{ k3s_version }}"
 
   - name: Wait to stabilize
@@ -70,15 +69,8 @@
     delegate_to: 127.0.0.1
     become: no
 
-  - name: Get server node url
-    set_fact:
-      server_url: "{{ ansible_facts.default_ipv4.address }}"
-    register: global_server_url
-    delegate_to: "{{ item }}"
-    loop: "{{ groups['picluster_leader'] }}"
-
 - name: Install servers
-  command: "/tmp/k3s_install --server https://{{ global_server_url['results'][0].item }}:6443"
+  command: "/tmp/k3s_install --server https://picluster-control.home.lan:6443 server"
   environment:
     K3S_DATASTORE_ENDPOINT: "mysql://etcd:{{ vault_ETCD_PASSWORD }}@tcp(192.168.1.28:3307)/etcd"
     K3S_TOKEN: "{{ node_token['results'][0].item }}"
@@ -89,7 +81,7 @@
   command: /tmp/k3s_install
   environment:
     K3S_DATASTORE_ENDPOINT: "mysql://etcd:{{ vault_ETCD_PASSWORD }}@tcp(192.168.1.28:3307)/etcd"
-    K3S_URL: "https://{{ global_server_url['results'][0].item }}:6443"
+    K3S_URL: "https://picluster-control.home.lan:6443"
     K3S_TOKEN: "{{ node_token['results'][0].item }}"
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
   when: k3s_role == 'agent'

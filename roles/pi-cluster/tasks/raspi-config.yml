@@ -44,7 +44,7 @@
 
 - name: Set server fact
   set_fact:
-    k3s_role: "{{ (inventory_hostname == 'picluster-01' ) | ternary('server', 'worker') }}"
+    k3s_role: "{{ k3s_role }}"
 
 - name: Reboot for file system expansion
   reboot:

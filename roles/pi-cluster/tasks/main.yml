@@ -1,15 +1,23 @@
 ---
 - name: Raspi Config setup
-  include_tasks: raspi-config.yml
+  import_tasks: raspi-config.yml
 
 - name: K3s Prep
-  include_tasks: k3s-prep.yml
+  import_tasks: k3s-prep.yml
 
 - name: Security Groups
-  include_tasks: iptables.yml
+  import_tasks: iptables.yml
+
+- name: Replace rsyslog logrotate Config
+  copy:
+    src: rsyslog
+    dest: /etc/logrotate.d/rsyslog
+    owner: root
+    group: root
+    mode: 0644
 
 - name: K3s Install
-  include_tasks: k3s-install.yml
+  import_tasks: k3s-install.yml
 
 - name: Fetch K3s Config
-  include_tasks: k3s-utils.yml
+  import_tasks: k3s-utils.yml
