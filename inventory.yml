@@ -9,13 +9,13 @@ all:
       vars:
         k3s_role: leader
     picluster_server:
-      hosts:
-        picluster-02.home.lan:
-          ansible_host: 192.168.1.102
+      hosts: {}
       vars:
         k3s_role: server
     picluster_agent:
       hosts:
+        picluster-02.home.lan:
+          ansible_host: 192.168.1.102
         picluster-03.home.lan:
           ansible_host: 192.168.1.103
         picluster-04.home.lan:
@@ -24,8 +24,10 @@ all:
         k3s_role: agent
     linux:
       hosts:
+        inspiron.home.lan:
+          ansible_host: 192.168.1.16
+    nonstd_linux:
+      hosts:
         synology.home.lan:
           ansible_host: 192.168.1.28
           ansible_port: 8422
-        inspiron.home.lan:
-          ansible_host: 192.168.1.16
