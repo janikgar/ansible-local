@@ -1,0 +1,55 @@
+---
+- name: Get Node Exporter versions
+  uri:
+    url:  https://api.github.com/repos/prometheus/node_exporter/tags
+    body_format: json
+  register: ne_versions
+  run_once: yes
+  delegate_to: localhost
+  become: no
+
+- name: Set latest Node Exporter version
+  set_fact:
+    latest_ne_version:  "{{ ne_versions.json | community.general.json_query('[0].name') }}"
+
+- name: Download latest Node Exporter
+  get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/{{ latest_ne_version }}/node_exporter-{{ latest_ne_version[1:]}}.linux-arm64.tar.gz"
+    dest: /tmp/node-exporter.tar.gz
+
+- name: Stop Node Exporter service (if it exists)
+  service:
+    name: node_exporter
+    state: stopped
+  ignore_errors: yes
+
+- name: Ensure gzip / unzip are available
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - gzip
+    - zip
+
+- name: Extract binary
+  unarchive:
+    src: /tmp/node-exporter.tar.gz
+    include:
+      - "node_exporter-{{ latest_ne_version[1:] }}.linux-arm64/node_exporter"
+    dest: /usr/local/bin
+    remote_src: yes
+    extra_opts:
+      - --strip-components
+      - "1"
+
+- name: Create service
+  copy:
+    src: node-exporter.service
+    dest: /etc/systemd/system
+
+- name: Start service
+  systemd:
+    name: node-exporter
+    state: started
+    enabled: yes
+    daemon_reload: yes
