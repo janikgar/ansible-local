@@ -54,15 +54,18 @@
   - name: Create join token
     shell: openssl rand -base64 30
     register: node_token
-    delegate_to: "{{ item }}"
-    loop: "{{ groups['picluster_leader'] }}"
+    run_once: true
+    delegate_to: localhost
+    become: no
 
   - name: Initialize leader
     command: /tmp/k3s_install --disable traefik --disable local-storage server
     environment:
       K3S_DATASTORE_ENDPOINT: "mysql://etcd:{{ vault_ETCD_PASSWORD }}@tcp(192.168.1.28:3307)/etcd"
-      K3S_TOKEN: "{{ node_token['results'][0].item }}"
+      K3S_TOKEN: "{{ node_token.stdout }}"
       INSTALL_K3S_VERSION: "{{ k3s_version }}"
+    delegate_to: "{{ item }}"
+    loop: "{{ groups['picluster_leader'] }}"
 
   - name: Wait to stabilize
     command: sleep 10
@@ -70,18 +73,17 @@
     become: no
 
 - name: Install servers
-  command: "/tmp/k3s_install --server https://picluster-control.home.lan:6443 server"
+  command: "/tmp/k3s_install server --tls-san 192.168.1.101 --tls-san picluster-01.home.lan --tls-san picluster-control.home.lan"
   environment:
     K3S_DATASTORE_ENDPOINT: "mysql://etcd:{{ vault_ETCD_PASSWORD }}@tcp(192.168.1.28:3307)/etcd"
-    K3S_TOKEN: "{{ node_token['results'][0].item }}"
+    K3S_TOKEN: "{{ node_token.stdout }}"
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
   when: k3s_role == 'server'
 
 - name: Install agents
-  command: /tmp/k3s_install
+  command: /tmp/k3s_install agent
   environment:
-    K3S_DATASTORE_ENDPOINT: "mysql://etcd:{{ vault_ETCD_PASSWORD }}@tcp(192.168.1.28:3307)/etcd"
-    K3S_URL: "https://picluster-control.home.lan:6443"
-    K3S_TOKEN: "{{ node_token['results'][0].item }}"
+    K3S_URL: "https://192.168.1.101:6443"
+    K3S_TOKEN: "{{ node_token.stdout }}"
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
   when: k3s_role == 'agent'
