@@ -1,7 +1,7 @@
 ---
 ansible_python_interpreter: /usr/bin/python3
 
-k3s_version: v1.19.11+k3s1
+k3s_version: v1.22.2+k3s2
 
 lan_ips:
   - 192.168.0.0/16
@@ -15,4 +15,5 @@ security_groups:
   - { port: "6443", comment: "Kubernetes" }
   - { port: "8472", comment: "Flannel VXLAN" }
   - { port: "10250", comment: "Metrics Server" }
+  - { port: "20000", comment: "Consul gRPC" }
   - { port: "30000:", comment: "Container ports"}
