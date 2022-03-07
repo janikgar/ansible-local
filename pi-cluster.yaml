@@ -3,5 +3,10 @@
   order: sorted
   remote_user: ansible
   roles:
+    - monitoring
+    - packages
     - pi-cluster
+    - iptables
+    - k3s-install
+    - k3s-get-config
   become: yes

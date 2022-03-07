@@ -2,6 +2,8 @@
 ansible_python_interpreter: /usr/bin/python3
 
 k3s_version: v1.22.2+k3s2
+new_k3s_install: false
+iptables_reboot: false
 
 lan_ips:
   - 192.168.0.0/16
