@@ -2,12 +2,6 @@
 - name: Raspi Config setup
   import_tasks: raspi-config.yml
 
-- name: K3s Prep
-  import_tasks: k3s-prep.yml
-
-- name: Security Groups
-  import_tasks: iptables.yml
-
 - name: Replace rsyslog logrotate Config
   copy:
     src: rsyslog
@@ -15,9 +9,3 @@
     owner: root
     group: root
     mode: 0644
-
-- name: K3s Install
-  import_tasks: k3s-install.yml
-
-- name: Fetch K3s Config
-  import_tasks: k3s-utils.yml

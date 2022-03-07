@@ -66,3 +66,4 @@
 - name: Restart
   reboot:
     reboot_timeout: 300
+  when: iptables_reboot
