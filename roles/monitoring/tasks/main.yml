@@ -10,7 +10,7 @@
 
 - name: Set latest Node Exporter version
   set_fact:
-    latest_ne_version:  "{{ ne_versions.json | community.general.json_query('[0].name') }}"
+    latest_ne_version:  "{{ ne_versions.json | json_query('[0].name') }}"
 
 - name: Download latest Node Exporter
   get_url:
