@@ -4,6 +4,7 @@
     name: jmespath
   run_once: yes
   delegate_to: localhost
+  become: no
 
 - name: Get Node Exporter versions
   uri:
