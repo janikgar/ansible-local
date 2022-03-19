@@ -1,4 +1,10 @@
 ---
+- name: Install JMESPath
+  pip:
+    - jmespath
+  run_once: yes
+  delegate_to: localhost
+
 - name: Get Node Exporter versions
   uri:
     url:  https://api.github.com/repos/prometheus/node_exporter/tags
