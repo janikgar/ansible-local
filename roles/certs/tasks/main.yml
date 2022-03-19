@@ -1,0 +1,20 @@
+---
+- name: Download CA Certs
+  uri:
+    url: http://certs.home.lan/ca.crt
+    return_content: yes
+  register: ca_cert
+  delegate_to: localhost
+  become: no
+  run_once: yes
+
+- name: Add cert to nodes
+  copy:
+    content: "{{ ca_cert.content }}"
+    dest: "/usr/local/share/ca-certificates/star_home_lan.crt"
+    owner: root
+    group: root
+    mode: "0400"
+
+- name: Update CA certs
+  command: update-ca-certificates
