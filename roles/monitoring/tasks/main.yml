@@ -19,7 +19,7 @@
 
 - name: Stop Node Exporter service (if it exists)
   service:
-    name: node_exporter
+    name: node-exporter
     state: stopped
   ignore_errors: yes
 
