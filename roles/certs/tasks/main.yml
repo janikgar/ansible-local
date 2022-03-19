@@ -1,5 +1,5 @@
 ---
-- name: Download CA Certs
+- name: Download CA Cert
   uri:
     url: http://certs.home.lan/ca.crt
     return_content: yes
@@ -8,9 +8,26 @@
   become: no
   run_once: yes
 
-- name: Add cert to nodes
+- name: Download Int Cert
+  uri:
+    url: http://certs.home.lan/int.crt
+    return_content: yes
+  register: int_cert
+  delegate_to: localhost
+  become: no
+  run_once: yes
+
+- name: Add CA cert to nodes
   copy:
     content: "{{ ca_cert.content }}"
+    dest: "/usr/local/share/ca-certificates/ca_home_lan.crt"
+    owner: root
+    group: root
+    mode: "0400"
+
+- name: Add Int cert to nodes
+  copy:
+    content: "{{ int_cert.content }}"
     dest: "/usr/local/share/ca-certificates/star_home_lan.crt"
     owner: root
     group: root
