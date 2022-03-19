@@ -18,3 +18,15 @@
 
 - name: Update CA certs
   command: update-ca-certificates
+
+- name: Restart K3s
+  service:
+    name: k3s
+    state: restarted
+  ignore_errors: yes
+
+- name: Restart K3s Agent
+  service:
+    name: k3s-agent
+    state: restarted
+  ignore_errors: yes
