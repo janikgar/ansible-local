@@ -1,9 +1,14 @@
 ---
+- name: Install setuptools
+  pip:
+    name: setuptools
+  run_once: yes
+  delegate_to: localhost
+  become: no
+
 - name: Install JMESPath
   pip:
-    name:
-      - setuptools
-      - jmespath
+    name: jmespath
   run_once: yes
   delegate_to: localhost
   become: no
