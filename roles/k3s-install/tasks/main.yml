@@ -3,24 +3,6 @@
   debug:
     msg: "{{ ansible_host }}: {{ k3s_role }}"
 
-- name: Check for Arkade
-  command: which arkade
-  register: arkade_present
-  ignore_errors: yes
-
-- name: Install Arkade
-  shell: curl -sLS https://dl.get-arkade.dev | sudo sh
-  when: arkade_present.failed == true
-
-# - name: Get Service facts
-#   service_facts: {}
-
-# - name: Check for K3s
-#   set_fact:
-#     k3s_running: "{{ ansible_facts['services']['k3s.service'] == 'running' | default(false) }}"
-#   register: k3s_running
-#   when: k3s_role != 'agent'
-
 - name: Download K3s script
   uri:
     url: https://get.k3s.io/
