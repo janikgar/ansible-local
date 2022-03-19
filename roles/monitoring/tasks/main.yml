@@ -1,18 +1,4 @@
 ---
-- name: Install setuptools
-  pip:
-    name: setuptools
-  run_once: yes
-  delegate_to: localhost
-  become: no
-
-- name: Install JMESPath
-  pip:
-    name: jmespath
-  run_once: yes
-  delegate_to: localhost
-  become: no
-
 - name: Get Node Exporter versions
   uri:
     url:  https://api.github.com/repos/prometheus/node_exporter/tags
@@ -24,7 +10,7 @@
 
 - name: Set latest Node Exporter version
   set_fact:
-    latest_ne_version:  "{{ ne_versions.json | json_query('[0].name') }}"
+    latest_ne_version:  "{{ ne_versions.json[0].name }}"
 
 - name: Download latest Node Exporter
   get_url:
