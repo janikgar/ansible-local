@@ -3,7 +3,7 @@
     - linux
     - picluster_leader:picluster_server:picluster_agent
   roles:
-    - certs
-    - packages
+    # - certs
+    # - packages
     - monitoring
   become: yes
