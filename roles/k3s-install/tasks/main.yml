@@ -20,6 +20,14 @@
     group: root
     mode: "0500"
 
+- name: Add trusted registry
+  copy:
+    src: files/registry.yaml
+    dest: "/etc/rancher/k3s/"
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: Tasks to initialize leader
   when: k3s_role == 'leader'
   block:
@@ -31,7 +39,7 @@
       group: root
       mode: "0400"
     with_fileglob:
-      - files/*.yaml
+      - files/manifests/*.yaml
 
   - name: Create join token
     shell: openssl rand -base64 30
@@ -49,6 +57,20 @@
     delegate_to: "{{ item }}"
     loop: "{{ groups['picluster_leader'] }}"
 
+  - name: Get leader token
+    command: cat /var/lib/rancher/k3s/server/token
+    register: new_local_token
+    delegate_to: "{{ item }}"
+    loop: "{{ groups['picluster_leader'] }}"
+    run_once: yes
+  
+  - name: Register leader token
+    set_fact:
+      new_token: "{{ new_local_token.results[0].stdout }}"
+    delegate_to: "{{ item }}"
+    loop: "{{ groups['picluster_leader'] }}"
+    run_once: yes
+
   - name: Wait to stabilize
     command: sleep 10
     delegate_to: 127.0.0.1
@@ -58,7 +80,8 @@
 - name: Install servers
   command: "/tmp/k3s_install server --tls-san 192.168.1.101 --tls-san picluster-01.home.lan --tls-san picluster-control.home.lan"
   environment:
-    K3S_TOKEN: "{{ node_token.stdout if new_k3s_install }}"
+    # K3S_TOKEN: "{{ node_token.stdout if new_k3s_install }}"
+    K3S_TOKEN: "{{ new_token }}"
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
   when: k3s_role == 'server'
 
@@ -66,6 +89,7 @@
   command: /tmp/k3s_install agent
   environment:
     K3S_URL: "https://192.168.1.101:6443"
-    K3S_TOKEN: "{{ node_token.stdout if new_k3s_install}}"
+    # K3S_TOKEN: "{{ node_token.stdout if new_k3s_install}}"
+    K3S_TOKEN: "{{ new_token }}"
     INSTALL_K3S_VERSION: "{{ k3s_version }}"
   when: k3s_role == 'agent'

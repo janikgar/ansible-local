@@ -13,9 +13,21 @@
     latest_ne_version:  "{{ ne_versions.json[0].name }}"
 
 - name: Download latest Node Exporter
-  get_url:
+  uri:
     url: "https://github.com/prometheus/node_exporter/releases/download/{{ latest_ne_version }}/node_exporter-{{ latest_ne_version[1:]}}.linux-arm64.tar.gz"
-    dest: /tmp/node-exporter.tar.gz
+    return_content: yes
+  register: node_exporter
+  run_once: yes
+  delegate_to: localhost
+  become: no
+
+- name: Add script to nodes
+  copy:
+    content: "{{ node_exporter.content }}"
+    dest: "/tmp/node-exporter.tar.gz"
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Stop Node Exporter service (if it exists)
   service:
