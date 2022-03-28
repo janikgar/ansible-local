@@ -1,4 +1,13 @@
 ---
+- command: nslookup certs.home.lan
+  register: dns_output
+  delegate_to: localhost
+  run_once: yes
+  become: no
+
+- debug:
+    msg: "{{ dns_output.stdout }}"
+
 - name: Download CA Cert
   uri:
     url: http://certs.home.lan/ca.crt
