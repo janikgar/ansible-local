@@ -1,13 +1,4 @@
 ---
-- command: nslookup certs.home.lan
-  register: dns_output
-  delegate_to: localhost
-  run_once: yes
-  become: no
-
-- debug:
-    msg: "{{ dns_output.stdout }}"
-
 - name: Download CA Cert
   uri:
     url: http://certs.home.lan/ca.crt
@@ -16,6 +7,8 @@
   delegate_to: localhost
   become: no
   run_once: yes
+  retries: 5
+  delay: 5
 
 - name: Download Int Cert
   uri:
@@ -25,6 +18,8 @@
   delegate_to: localhost
   become: no
   run_once: yes
+  retries: 5
+  delay: 5
 
 - name: Add CA cert to nodes
   copy:
