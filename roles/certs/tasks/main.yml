@@ -7,7 +7,7 @@
   delegate_to: localhost
   become: no
   run_once: yes
-  retries: 5
+  retries: 10
   delay: 5
   until: ca_cert is not failed
 
@@ -19,7 +19,7 @@
   delegate_to: localhost
   become: no
   run_once: yes
-  retries: 5
+  retries: 10
   delay: 5
   until: int_cert is not failed
 
