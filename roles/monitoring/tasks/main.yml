@@ -12,14 +12,17 @@
   set_fact:
     latest_ne_version:  "{{ ne_versions.json[0].name }}"
 
+- name: Set architecture to download
+  set_fact:
+    ne_arch:
+      aarch64: arm64
+      i386: "386"
+
 - name: Download latest Node Exporter
   uri:
-    url: "https://github.com/prometheus/node_exporter/releases/download/{{ latest_ne_version }}/node_exporter-{{ latest_ne_version[1:]}}.linux-arm64.tar.gz"
+    url: "https://github.com/prometheus/node_exporter/releases/download/{{ latest_ne_version }}/node_exporter-{{ latest_ne_version[1:]}}.linux-{{ ne_arch[ansible_facts.architecture] }}.tar.gz"
     return_content: yes
   register: node_exporter
-  run_once: yes
-  delegate_to: localhost
-  become: no
 
 - name: Add script to nodes
   copy:
@@ -47,7 +50,7 @@
   unarchive:
     src: /tmp/node-exporter.tar.gz
     include:
-      - "node_exporter-{{ latest_ne_version[1:] }}.linux-arm64/node_exporter"
+      - "node_exporter-{{ latest_ne_version[1:] }}.linux-{{ ne_arch[ansible_facts.architecture] }}/node_exporter"
     dest: /usr/local/bin
     remote_src: yes
     extra_opts:
