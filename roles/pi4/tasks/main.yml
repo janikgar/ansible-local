@@ -1,0 +1,21 @@
+---
+- name: Raspi Config setup
+  import_tasks: raspi-config.yml
+
+- name: Replace rsyslog logrotate Config
+  copy:
+    src: rsyslog
+    dest: /etc/logrotate.d/rsyslog
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Back Up old MOTD
+  command: cp /etc/motd /etc/motd.old
+
+- name: Add new MOTD
+  copy:
+    src: files/motd
+    dest: /etc/motd
+    owner: root
+    mode: "0644"

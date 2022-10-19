@@ -1,0 +1,55 @@
+---
+- name: Download CA Cert
+  uri:
+    url: http://certs.home.lan/ca.crt
+    return_content: yes
+  register: ca_cert
+  delegate_to: localhost
+  become: no
+  run_once: yes
+  retries: 10
+  delay: 5
+  until: ca_cert is not failed
+
+- name: Download Int Cert
+  uri:
+    url: http://certs.home.lan/int.crt
+    return_content: yes
+  register: int_cert
+  delegate_to: localhost
+  become: no
+  run_once: yes
+  retries: 10
+  delay: 5
+  until: int_cert is not failed
+
+- name: Add CA cert to nodes
+  copy:
+    content: "{{ ca_cert.content }}"
+    dest: "/usr/local/share/ca-certificates/ca_home_lan.crt"
+    owner: root
+    group: root
+    mode: "0400"
+
+- name: Add Int cert to nodes
+  copy:
+    content: "{{ int_cert.content }}"
+    dest: "/usr/local/share/ca-certificates/star_home_lan.crt"
+    owner: root
+    group: root
+    mode: "0400"
+
+- name: Update CA certs
+  command: update-ca-certificates
+
+- name: Restart K3s
+  service:
+    name: k3s
+    state: restarted
+  ignore_errors: yes
+
+- name: Restart K3s Agent
+  service:
+    name: k3s-agent
+    state: restarted
+  ignore_errors: yes

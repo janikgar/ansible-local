@@ -19,6 +19,7 @@
     destination_port: "{{ item[1].port }}"
     comment: "Allow LAN traffic to {{ item[1].comment }}"
     jump: ACCEPT
+    wait: "10"
 
 - name: Accept LAN UDP traffic on ports
   with_nested:
@@ -31,6 +32,7 @@
     destination_port: "{{ item[1].port }}"
     comment: "Allow LAN traffic to {{ item[1].comment }}"
     jump: ACCEPT
+    wait: "10"
 
 - name: Accept all traffic on DNS, HTTP/S ports
   loop:
@@ -43,22 +45,24 @@
     destination_port: "{{ item.port }}"
     comment: "Allow all traffic to {{ item.comment }}"
     jump: ACCEPT
+    wait: "10"
 
-- name: Reject other LAN traffic
-  loop: "{{ lan_ips }}"
-  iptables:
-    chain: INPUT
-    protocol: all
-    source: "{{ item }}"
-    comment: "Reject other LAN traffic"
-    jump: REJECT
+# - name: Reject other LAN traffic
+#   loop: "{{ lan_ips }}"
+#   iptables:
+#     chain: INPUT
+#     protocol: all
+#     source: "{{ item }}"
+#     comment: "Reject other LAN traffic"
+#     jump: REJECT
+#     wait: "10"
 
-- name: Drop other external traffic
-  iptables:
-    chain: INPUT
-    protocol: all
-    comment: "Drop other traffic"
-    jump: DROP
+# - name: Drop other external traffic
+#   iptables:
+#     chain: INPUT
+#     protocol: all
+#     comment: "Drop other traffic"
+#     jump: DROP
   
 - name: Save iptables
   shell: iptables-save
@@ -66,3 +70,4 @@
 - name: Restart
   reboot:
     reboot_timeout: 300
+  when: iptables_reboot

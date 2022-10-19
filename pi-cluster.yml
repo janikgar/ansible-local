@@ -3,5 +3,7 @@
   order: sorted
   remote_user: ansible
   roles:
-    - pi-cluster
+    - monitoring
+    - packages
+    - pi4
   become: yes
