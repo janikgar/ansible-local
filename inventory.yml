@@ -24,8 +24,8 @@ all:
         k3s_role: agent
     linux:
       hosts:
-        inspiron.home.lan:
-          ansible_host: 192.168.1.16
+        #inspiron.home.lan:
+        #  ansible_host: 192.168.1.16
         palantir-mobile.home.lan:
           ansible_host: 192.168.1.3
     nonstd_linux:
