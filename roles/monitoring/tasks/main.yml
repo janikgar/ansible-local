@@ -4,9 +4,9 @@
     url:  https://api.github.com/repos/prometheus/node_exporter/tags
     body_format: json
   register: ne_versions
-  run_once: yes
+  run_once: true
   delegate_to: localhost
-  become: no
+  become: false
 
 - name: Set latest Node Exporter version
   set_fact:
@@ -37,7 +37,7 @@
   service:
     name: node-exporter
     state: stopped
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Ensure gzip / unzip are available
   apt:
@@ -53,7 +53,7 @@
     include:
       - "node_exporter-{{ latest_ne_version[1:] }}.linux-{{ ne_arch[ansible_facts.architecture] }}/node_exporter"
     dest: /usr/local/bin
-    remote_src: yes
+    remote_src: true
     extra_opts:
       - --strip-components
       - "1"
@@ -67,5 +67,5 @@
   systemd:
     name: node-exporter
     state: started
-    enabled: yes
-    daemon_reload: yes
+    enabled: true
+    daemon_reload: true

@@ -1,7 +1,7 @@
 ---
 - hosts:
     - linux
-    - picluster_leader:picluster_server:picluster_agent
+    - picluster_leader:picluster_agent
   roles:
     - packages
     - monitoring

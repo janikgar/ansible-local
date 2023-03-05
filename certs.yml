@@ -4,4 +4,4 @@
     - picluster_leader:picluster_server:picluster_agent
   roles:
     - certs
-  become: yes
+  become: true

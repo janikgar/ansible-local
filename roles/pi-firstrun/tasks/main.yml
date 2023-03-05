@@ -3,7 +3,7 @@
     name: pi
     update_password: always
     password: $6$wpHezfpR7vZr.eMf$zBL6CJKQ5ITU0aFLlagJziogrXEbvdz5zNCKV9y7ul9z4oCrSy/VbFH6FUGP4ziQLMquHfQSJuZL2u1uy4HdC0
-  become: yes
+  become: true
 
 - name: Create SSH directory
   file:
@@ -25,7 +25,7 @@
     name: ansible
     groups: 
       - sudo
-  become: yes
+  become: true
 
 - name: Create Ansible SSH directory
   file:
@@ -33,7 +33,7 @@
     state: directory
     owner: ansible
     group: ansible
-  become: yes
+  become: true
 
 - name: Add Ansible SSH key
   copy:
@@ -42,7 +42,7 @@
     owner: ansible
     group: ansible
     mode: "0444"
-  become: yes
+  become: true
 
 - name: Add Ansible NOPASSWD sudo
   copy:
@@ -51,4 +51,4 @@
     owner: root
     group: root
     mode: "0400"
-  become: yes
+  become: true
