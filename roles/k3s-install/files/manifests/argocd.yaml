@@ -13,6 +13,8 @@ spec:
       logging:
         format: json
     configs:
+      cm:
+        url: "https://argocd.home.lan"
       rbac:
         policy.default: |
           g, project_admin, role:admin
@@ -25,7 +27,8 @@ spec:
           readOnly: true
       volumes:
         - hostPath:
-          path: /etc/ssl/certs
+            path: /etc/ssl/certs
+          name: certs
     server:
       extraArgs:
         - --insecure
