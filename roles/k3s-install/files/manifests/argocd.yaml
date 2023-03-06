@@ -12,6 +12,20 @@ spec:
     global:
       logging:
         format: json
+    configs:
+      rbac:
+        policy.default: |
+          g, project_admin, role:admin
+          p, role:admin, applications, *, */*, allow
+          p, role:admin, projects, *, default, allow
+    dex:
+      volumeMounts:
+        - mountPath: /etc/ssl/certs
+          name: certs
+          readOnly: true
+      volumes:
+        - hostPath:
+          path: /etc/ssl/certs
     server:
       extraArgs:
         - --insecure
