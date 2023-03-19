@@ -16,6 +16,12 @@
       state: latest
     when: ansible_os_family == "Debian"
 
+- name: Install ntpdate
+  apt:
+    name: ntpdate
+    state: latest
+  when: ansible_os_family == "Debian"
+
 - name: Install snmpd
   apt:
     name: "{{ item }}"
