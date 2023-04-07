@@ -7,11 +7,8 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "4.6.4"
+  version: "5.28.1"
   valuesContent: |-
-    applicationSet:
-      image:
-        repository: baloisemichaelmuehlebach/argocd-applicationset
     controller:
       logFormat: json
     server:
@@ -28,6 +25,6 @@ spec:
           secretName: argocd-ingress-secret
         annotations:
           cert-manager.io/cluster-issuer: vault-issuer
-          cert-manager.io/common-name: argocd2.home.lan
+          cert-manager.io/common-name: argocd.home.lan
     repoServer:
       logFormat: json
