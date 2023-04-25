@@ -7,7 +7,7 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "5.28.1"
+  version: "5.29.1"
   valuesContent: |-
     controller:
       logFormat: json

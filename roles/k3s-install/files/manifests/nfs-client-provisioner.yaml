@@ -7,7 +7,7 @@ spec:
   repo: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
   chart: nfs-subdir-external-provisioner 
   targetNamespace: kube-system
-  version: "4.0.10"
+  version: "4.0.18"
   bootstrap: true
   set:
     nfs.server: "192.168.1.28"
