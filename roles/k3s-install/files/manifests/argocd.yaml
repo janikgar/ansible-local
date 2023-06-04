@@ -7,11 +7,11 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "5.24.1"
+  version: "5.34.6"
   valuesContent: |-
     global:
       image:
-        tag: v2.7.0-rc2
+        tag: v2.7.3
     configs:
       rbac:
         policy.csv: |-
