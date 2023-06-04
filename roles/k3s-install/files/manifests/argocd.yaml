@@ -10,30 +10,24 @@ spec:
   version: "5.24.1"
   valuesContent: |-
     global:
-      logging:
-        format: json
+      image:
+        tag: v2.7.0-rc2
     configs:
-      cm:
-        url: "https://argocd.home.lan"
       rbac:
-        policy.default: |
-          g, project_admin, role:admin
-          p, role:admin, applications, *, */*, allow
-          p, role:admin, projects, *, default, allow
-    dex:
-      volumeMounts:
-        - mountPath: /etc/ssl/certs
-          name: certs
-          readOnly: true
-      volumes:
-        - hostPath:
-            path: /etc/ssl/certs
-          name: certs
+        policy.csv: |-
+          p, role:org-admin, applications, *, */*, allow
+          p, role:org-admin, clusters, *, */*, allow
+          p, role:org-admin, respositories, *, */*, allow
+          p, role:org-admin, logs, *, */*, allow
+          p, role:org-admin, exec, *, */*, allow
+          g, ArgoCD Admins, role:org-admin
     server:
+      url: https://argocd.home.lan
       extraArgs:
         - --insecure
       ingress:
         enabled: true
+        ingressClassName: nginx
         hosts:
           - argocd.home.lan
         tls:
@@ -43,3 +37,11 @@ spec:
         annotations:
           cert-manager.io/cluster-issuer: vault-issuer
           cert-manager.io/common-name: argocd.home.lan
+    repoServer:
+      logFormat: json
+    dex:
+      image:
+        tag: v2.36.0
+    redis:
+      image:
+        tag: 7.0.11-alpine
