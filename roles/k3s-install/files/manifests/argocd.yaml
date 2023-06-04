@@ -7,16 +7,27 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "5.29.1"
+  version: "5.24.1"
   valuesContent: |-
-    controller:
-      logFormat: json
+    global:
+      image:
+        tag: v2.7.0-rc2
+    configs:
+      rbac:
+        policy.csv: |-
+          p, role:org-admin, applications, *, */*, allow
+          p, role:org-admin, clusters, *, */*, allow
+          p, role:org-admin, respositories, *, */*, allow
+          p, role:org-admin, logs, *, */*, allow
+          p, role:org-admin, exec, *, */*, allow
+          g, ArgoCD Admins, role:org-admin
     server:
-      logFormat: json
+      url: https://argocd.home.lan
       extraArgs:
         - --insecure
       ingress:
         enabled: true
+        ingressClassName: nginx
         hosts:
           - argocd.home.lan
         tls:
@@ -28,3 +39,9 @@ spec:
           cert-manager.io/common-name: argocd.home.lan
     repoServer:
       logFormat: json
+    dex:
+      image:
+        tag: v2.36.0
+    redis:
+      image:
+        tag: 7.0.11-alpine
