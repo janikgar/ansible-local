@@ -37,11 +37,27 @@ spec:
         annotations:
           cert-manager.io/cluster-issuer: vault-issuer
           cert-manager.io/common-name: argocd.home.lan
+      volumes:
+        - hostPath:
+            path: /etc/ssl/certs
+          name: certs
+      volumeMounts:
+        - mountPath: /etc/ssl/certs
+          name: certs
+          readOnly: true
     repoServer:
       logFormat: json
     dex:
       image:
         tag: v2.36.0
+      volumes:
+        - hostPath:
+            path: /etc/ssl/certs
+          name: certs
+      volumeMounts:
+        - mountPath: /etc/ssl/certs
+          name: certs
+          readOnly: true
     redis:
       image:
         tag: 7.0.11-alpine
