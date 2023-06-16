@@ -1,0 +1,8 @@
+tls-san:
+  - '192.168.1.101'
+  - picluster-01.home.lan
+  - picluster-control.home.lan
+disable:
+  - traefik
+  - local-storage
+write-kubeconfig-mode: '0644'

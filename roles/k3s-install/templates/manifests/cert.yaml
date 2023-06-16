@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  tls.crt: {{ lookup('env', 'CERT_FILE') }}
+  tls.key: {{ lookup('env', 'KEY_FILE') }}
+kind: Secret
+metadata:
+  creationTimestamp: null
+  name: star-home-lan
+  namespace: nginx
+type: kubernetes.io/tls

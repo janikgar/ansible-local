@@ -13,6 +13,6 @@ spec:
       metrics:
         enabled: true
       extraArgs:
-        default-ssl-certificate: nginx/star-home-lan-vault
+        default-ssl-certificate: nginx/star-home-lan
     serviceAccount:
       name: ingress-nginx-controller

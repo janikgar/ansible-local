@@ -1,2 +1,4 @@
 *.log
 .vault-pass
+.env
+2023_star_home_lan.*

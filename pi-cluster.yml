@@ -3,7 +3,9 @@
   order: sorted
   remote_user: ansible
   roles:
-    - monitoring
-    - packages
-    - pi4
+    #- monitoring
+    #- packages
+    #- pi4
+    - k3s-install
+    - k3s-get-config
   become: yes
