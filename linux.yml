@@ -1,7 +1,6 @@
 ---
-- hosts:
-    - linux
-    - picluster_leader:picluster_agent
+- hosts: 127.0.0.1
+  connection: local
   roles:
     - packages
     - monitoring

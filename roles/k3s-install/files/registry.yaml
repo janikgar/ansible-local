@@ -1,7 +1,0 @@
-mirrors:
-  "registry.home.lan":
-    endpoint:
-      - https://registry.home.lan
-configs:
-  "registry.home.lan":
-    ca_file: /usr/local/share/ca-certificates/star_home_lan.crt

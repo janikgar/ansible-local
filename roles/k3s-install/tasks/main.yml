@@ -20,14 +20,6 @@
     group: root
     mode: "0500"
 
-- name: Add trusted registry
-  copy:
-    src: files/registry.yaml
-    dest: "/etc/rancher/k3s/"
-    owner: root
-    group: root
-    mode: "0644"
-
 - name: Tasks to initialize leader
   when: k3s_role == 'leader'
   block:

@@ -1,13 +1,11 @@
 ---
-- hosts: linux:picluster_leader
-  order: sorted
-  remote_user: pi
+- hosts: 127.0.0.1
+  connection: local
   roles:
     - pi-firstrun
 
-- hosts: linux:picluster_leader
-  order: sorted
-  remote_user: ansible
+- hosts: 127.0.0.1
+  connection: local
   roles:
     - packages
   become: yes
