@@ -2,7 +2,5 @@
 - hosts: 127.0.0.1
   connection: local
   roles:
-    - monitoring
-    - packages
     - pi4
   become: yes
