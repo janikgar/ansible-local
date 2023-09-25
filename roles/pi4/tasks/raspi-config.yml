@@ -8,18 +8,6 @@
   shell: "raspi-config nonint do_hostname {{ inventory_hostname }}"
   when: pi_hostname.stdout != inventory_hostname
 
-- name: Check if FS is expandable
-  shell: "raspi-config nonint get_can_expand"
-  register: fs_filled
-  changed_when: False
-
-- name: Expand Filesystem
-  shell: "raspi-config nonint do_expand_rootfs"
-  when: fs_filled.stdout != '0'
-
-- name: Set GPU memory split
-  shell: raspi-config nonint do_memory_split 16
-
 - name: Add rc.local
   copy:
     src: rc.local
@@ -46,7 +34,25 @@
   set_fact:
     k3s_role: "{{ k3s_role }}"
 
-- name: Reboot for file system expansion
-  reboot:
-    reboot_timeout: 600
-  when: fs_filled.stdout != '0'
+- name: Try to expand FS
+  block:
+  - name: Check if FS is expandable
+    shell: "raspi-config nonint get_can_expand"
+    register: fs_filled
+    changed_when: False
+
+  - name: Expand Filesystem
+    shell: "raspi-config nonint do_expand_rootfs"
+    when: fs_filled.stdout != '0'
+
+  - name: Set GPU memory split
+    shell: raspi-config nonint do_memory_split 16
+
+  - name: Reboot for file system expansion
+    reboot:
+      reboot_timeout: 600
+    when: fs_filled.stdout != '0'
+  rescue:
+    - name: Skip
+      debug:
+        msg: "Unable to expand FS"
