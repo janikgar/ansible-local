@@ -30,10 +30,6 @@
     enabled: yes
     state: restarted
 
-- name: Set server fact
-  set_fact:
-    k3s_role: "{{ k3s_role }}"
-
 - name: Try to expand FS
   block:
   - name: Check if FS is expandable
