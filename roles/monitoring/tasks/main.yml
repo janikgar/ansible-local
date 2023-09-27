@@ -4,9 +4,6 @@
     url:  https://api.github.com/repos/prometheus/node_exporter/tags
     body_format: json
   register: ne_versions
-  run_once: true
-  delegate_to: localhost
-  become: false
 
 - name: Set latest Node Exporter version
   set_fact:
