@@ -3,6 +3,9 @@
   uri:
     url:  https://api.github.com/repos/prometheus/node_exporter/tags
     body_format: json
+  delay: 5
+  retries: 5
+  until: ne_versions is not failed
   register: ne_versions
 
 - name: Set latest Node Exporter version
