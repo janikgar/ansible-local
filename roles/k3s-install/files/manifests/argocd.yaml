@@ -7,11 +7,11 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "5.34.6"
+  version: "5.46.8"
   valuesContent: |-
     global:
       image:
-        tag: v2.7.3
+        tag: v2.8.4
     configs:
       rbac:
         policy.csv: |-
@@ -20,7 +20,8 @@ spec:
           p, role:org-admin, respositories, *, */*, allow
           p, role:org-admin, logs, *, */*, allow
           p, role:org-admin, exec, *, */*, allow
-          g, ArgoCD Admins, role:org-admin
+          g, project_admin, role:org-admin
+          p, backstage, applications, get, */*, allow
     server:
       url: https://argocd.home.lan
       extraArgs:
@@ -41,7 +42,38 @@ spec:
       logFormat: json
     dex:
       image:
-        tag: v2.36.0
+        tag: v2.37.0
     redis:
       image:
-        tag: 7.0.11-alpine
+        tag: 7.0.13-alpine
+    notifications:
+      notifiers:
+        service.webhook.consul-app-version: |
+          url: https://consul.home.lan/v1/kv/
+          service.alertmanager: |
+            targets:
+              - alertmanager-operated.prometheus.svc.cluster.local:9093
+      templates:
+        template.alertmanager-notification: |
+          message: "Application {{.app.metadata.name}} has update. Status: {{.app.status.sync.status}}, Health: {{.app.status.health.status}}"
+          alertmanager:
+            generatorURL: "https://argocd.home.lan/applications/argocd/{{.app.metadata.name}}"
+            labels:
+              origin: argocd
+              app: "{{.app.metadata.name}}"
+              namespace: argocd
+              destNamespace: "{{.app.spec.destination.namespace}}"
+              status: "{{.app.status.sync.status}}"
+              health: "{{.app.status.health.status}}"
+              revision: "{{.app.status.sync.revision}}"
+        template.app-version-notification: |
+          webhook:
+            consul-app-version:
+              method: PUT
+              path: /argocd-versions/{{.app.metadata.name}}
+              body: |
+                {"deployed_version": "{{.app.status.sync.revision}}"}
+      triggers:
+        trigger.on-is-deployed: |
+          - when: app.status.sync.status == 'Synced' and app.status.health.status == 'Healthy'
+            send: [app-version-notification, alertmanager-notification]
