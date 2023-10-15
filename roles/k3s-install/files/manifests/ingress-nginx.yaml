@@ -16,3 +16,5 @@ spec:
         default-ssl-certificate: nginx/star-home-lan-vault
     serviceAccount:
       name: ingress-nginx-controller
+    tcp:
+      "5432": postgresql15/postgresql15-primary:5432
