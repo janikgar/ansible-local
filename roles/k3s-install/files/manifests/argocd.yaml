@@ -13,6 +13,42 @@ spec:
       image:
         tag: v2.8.4
     configs:
+      cm:
+        create: true
+        url: https://argocd.home.lan
+        dex.config: |
+          connectors:
+          - config:
+              issuer: https://authentik.home.lan/application/o/argocd/
+              clientID: 658578a26fd391df56029e6d61c0d537a9358cb4
+              clientSecret: $dex.authentik.clientSecret
+              insecureEnableGroups: true
+              scopes:
+                - openid
+                - profile
+                - email
+            name: authentik
+            type: oidc
+            id: authentik
+        admin.enabled: "true"
+        application.instanceLabelKey: argocd.argoproj.io/instance
+        exec.enabled: "false"
+        resource.compareoptions: |
+          ignoreDifferencesOnResourceUpdates: true
+        resource.customizations.ignoreResourceUpdates.argoproj.io_Application: |
+          jsonPointers:
+            - /status
+            - /status/reconciledAt
+            - /metadata/generation
+            - /metadata/resourceVersion
+        resource.ignoreResourceUpdatesEnabled: "true"
+        server.rbac.log.enforce.enable: "false"
+        timeout.hard.reconciliation: 0s
+        timeout.reconciliation: 180s
+      params:
+        create: true
+        controller.operation.processors: "10"
+        controller.status.processors: "10"
       rbac:
         policy.csv: |-
           p, role:org-admin, applications, *, */*, allow
@@ -40,12 +76,44 @@ spec:
           cert-manager.io/common-name: argocd.home.lan
     repoServer:
       logFormat: json
+    controller:
+      resources:
+        requests:
+          cpu: 250m
+          memory: 300Mi
+        limits:
+          cpu: 500m
+          memory: 350Mi
     dex:
       image:
         tag: v2.37.0
+      volumeMounts:
+        - mountPath: /etc/ssl/certs
+          name: certs
+          readOnly: true
+      volumes:
+        - hostPath:
+            path: /etc/ssl/certs
+          name: certs
     redis:
       image:
         tag: 7.0.13-alpine
+    repositories:
+      all:
+        url: git@github.com:janikgar/home-k8s.git
+        type: git
+      semaphore:
+        url: git@github.com:janikgar/semaphore-home-k8s.git
+        type: git
+    credentialTemplates:
+      gitssh:
+        url: git@github.com:janikgar/home-k8s.git
+        sshPrivateKey: |
+          REPLACE WITH APPROPRIATE KEY
+      gitssh2:
+        url: git@github.com:janikgar/semaphore-home-k8s.git
+        sshPrivateKey: |
+          REPLACE WITH APPROPRIATE KEY
     notifications:
       notifiers:
         service.webhook.consul-app-version: |
