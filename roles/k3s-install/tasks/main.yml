@@ -34,6 +34,7 @@
       - files/manifests/*.yaml
 
   - name: Add OTEL config to leader
+    when: k3s_role == 'leader'
     copy:
       src: files/additional/kubeapiserver-otlp.yaml
       dest: "/etc/rancher/k3s/kubeapiserver-otlp.yaml"
@@ -78,7 +79,7 @@
     when: new_k3s_install
 
 - name: Install servers
-  command: "/tmp/k3s_install server --tls-san 192.168.1.101 --tls-san picluster-01.home.lan --tls-san picluster-control.home.lan" --kube-apiserver-arg=tracing-config-file= 
+  command: "/tmp/k3s_install server --tls-san 192.168.1.101 --tls-san picluster-01.home.lan --tls-san picluster-control.home.lan --kube-apiserver-arg=tracing-config-file=/etc/rancher/k3s/kubeapiserver-otlp.yaml"
   environment:
     # K3S_TOKEN: "{{ node_token.stdout if new_k3s_install }}"
     K3S_TOKEN: "{{ new_token }}"
