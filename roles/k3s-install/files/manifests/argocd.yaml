@@ -12,6 +12,10 @@ spec:
     global:
       image:
         tag: v2.8.4
+    applicationSet:
+      metrics:
+        serviceMonitor:
+          enabled: true
     configs:
       cm:
         create: true
@@ -77,8 +81,14 @@ spec:
         annotations:
           cert-manager.io/cluster-issuer: vault-issuer
           cert-manager.io/common-name: argocd.home.lan
+      metrics:
+        serviceMonitor:
+          enabled: true
     repoServer:
       logFormat: json
+      metrics:
+        serviceMonitor:
+          enabled: true
     controller:
       resources:
         requests:
@@ -87,6 +97,9 @@ spec:
         limits:
           cpu: 500m
           memory: 350Mi
+      metrics:
+        serviceMonitor:
+          enabled: true
     dex:
       image:
         tag: v2.37.0
@@ -98,9 +111,15 @@ spec:
         - hostPath:
             path: /etc/ssl/certs
           name: certs
+      metrics:
+        serviceMonitor:
+          enabled: true
     redis:
       image:
         tag: 7.0.13-alpine
+      metrics:
+        serviceMonitor:
+          enabled: true
     repositories:
       all:
         url: git@github.com:janikgar/home-k8s.git
@@ -124,6 +143,9 @@ spec:
           service.alertmanager: |
             targets:
               - alertmanager-operated.prometheus.svc.cluster.local:9093
+      metrics:
+        serviceMonitor:
+          enabled: true
       templates:
         template.alertmanager-notification: |
           message: "Application {{.app.metadata.name}} has update. Status: {{.app.status.sync.status}}, Health: {{.app.status.health.status}}"
