@@ -14,6 +14,7 @@ spec:
         tag: v2.8.4
     applicationSet:
       metrics:
+        enabled: true
         serviceMonitor:
           enabled: true
     configs:
@@ -56,6 +57,7 @@ spec:
         controller.status.processors: "2"
         controller.kubectl.parallelism.limit: "10"
         otlp.address: http://192.168.1.28:32001
+        server.insecure: "true"
       rbac:
         policy.csv: |-
           p, role:org-admin, applications, *, */*, allow
@@ -67,8 +69,6 @@ spec:
           p, backstage, applications, get, */*, allow
     server:
       url: https://argocd.home.lan
-      extraArgs:
-        - --insecure
       ingress:
         enabled: true
         ingressClassName: nginx
@@ -82,11 +82,12 @@ spec:
           cert-manager.io/cluster-issuer: vault-issuer
           cert-manager.io/common-name: argocd.home.lan
       metrics:
+        enabled: true
         serviceMonitor:
           enabled: true
     repoServer:
-      logFormat: json
       metrics:
+        enabled: true
         serviceMonitor:
           enabled: true
     controller:
@@ -98,6 +99,7 @@ spec:
           cpu: 500m
           memory: 350Mi
       metrics:
+        enabled: true
         serviceMonitor:
           enabled: true
     dex:
@@ -112,12 +114,14 @@ spec:
             path: /etc/ssl/certs
           name: certs
       metrics:
+        enabled: true
         serviceMonitor:
           enabled: true
     redis:
       image:
         tag: 7.0.13-alpine
       metrics:
+        enabled: true
         serviceMonitor:
           enabled: true
     repositories:
@@ -144,6 +148,7 @@ spec:
             targets:
               - alertmanager-operated.prometheus.svc.cluster.local:9093
       metrics:
+        enabled: true
         serviceMonitor:
           enabled: true
       templates:
