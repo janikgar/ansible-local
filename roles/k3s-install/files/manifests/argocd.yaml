@@ -35,10 +35,11 @@ spec:
         exec.enabled: "false"
         resource.compareoptions: |
           ignoreDifferencesOnResourceUpdates: true
-        resource.customizations.ignoreResourceUpdates.argoproj.io_Application: |
+        resource.customizations.ignoreResourceUpdates.all: |
           jsonPointers:
             - /status
-            - /status/reconciledAt
+        resource.customizations.ignoreResourceUpdates.argoproj.io_Application: |
+          jsonPointers:
             - /metadata/generation
             - /metadata/resourceVersion
         resource.ignoreResourceUpdatesEnabled: "true"
@@ -47,8 +48,10 @@ spec:
         timeout.reconciliation: 180s
       params:
         create: true
-        controller.operation.processors: "10"
-        controller.status.processors: "10"
+        controller.operation.processors: "5"
+        controller.status.processors: "2"
+        controller.kubectl.parallelism.limit: "10"
+        otlp.address: http://192.168.1.28:32001
       rbac:
         policy.csv: |-
           p, role:org-admin, applications, *, */*, allow
