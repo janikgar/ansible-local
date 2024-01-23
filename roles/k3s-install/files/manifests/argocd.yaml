@@ -7,11 +7,11 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "5.46.8"
+  version: "5.53.4"
   valuesContent: |-
     global:
       image:
-        tag: v2.8.4
+        tag: v2.9.5
     applicationSet:
       metrics:
         enabled: true
@@ -56,7 +56,6 @@ spec:
         controller.operation.processors: "5"
         controller.status.processors: "2"
         controller.kubectl.parallelism.limit: "10"
-        otlp.address: http://192.168.1.28:32001
         server.insecure: "true"
       rbac:
         policy.csv: |-
@@ -94,10 +93,10 @@ spec:
       resources:
         requests:
           cpu: 250m
-          memory: 300Mi
+          memory: 384Mi
         limits:
           cpu: 500m
-          memory: 350Mi
+          memory: 512Mi
       metrics:
         enabled: true
         serviceMonitor:
@@ -119,7 +118,7 @@ spec:
           enabled: true
     redis:
       image:
-        tag: 7.0.13-alpine
+        tag: 7.2.4-alpine
       metrics:
         enabled: true
         serviceMonitor:
