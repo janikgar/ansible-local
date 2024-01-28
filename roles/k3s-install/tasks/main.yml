@@ -50,7 +50,7 @@
     when: new_k3s_install
 
   - name: Initialize leader
-    command: /tmp/k3s_install --disable traefik --disable local-storage server
+    command: /tmp/k3s_install --disable traefik --disable local-storage server --disable coredns
     environment:
       K3S_TOKEN: "{{ node_token.stdout if new_k3s_install }}"
       INSTALL_K3S_VERSION: "{{ k3s_version }}"
