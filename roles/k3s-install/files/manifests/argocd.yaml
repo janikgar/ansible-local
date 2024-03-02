@@ -7,11 +7,11 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "5.53.4"
+  version: "6.5.1"
   valuesContent: |-
     global:
       image:
-        tag: v2.9.5
+        tag: v2.10.2
     applicationSet:
       metrics:
         enabled: true
@@ -71,12 +71,8 @@ spec:
       ingress:
         enabled: true
         ingressClassName: nginx
-        hosts:
-          - argocd.home.lan
-        tls:
-        - hosts:
-          - argocd.home.lan
-          secretName: argocd-ingress-secret
+        hostname: argocd.home.lan
+        tls: enabled
         annotations:
           cert-manager.io/cluster-issuer: vault-issuer
           cert-manager.io/common-name: argocd.home.lan
