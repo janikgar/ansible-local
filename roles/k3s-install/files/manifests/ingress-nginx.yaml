@@ -17,4 +17,4 @@ spec:
     serviceAccount:
       name: ingress-nginx-controller
     tcp:
-      "5432": postgresql15/postgresql15-primary:5432
+      "5432": postgresql-blue/postgresql-blue-primary:5432
