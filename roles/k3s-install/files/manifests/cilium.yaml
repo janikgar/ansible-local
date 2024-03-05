@@ -28,8 +28,15 @@ spec:
       replicas: 1
       unmanagedPodWatcher:
         restart: true
-    policyEnforcementMode: never
+    policyEnforcementMode: default
     routingMode: tunnel
+    resources:
+      requests:
+        cpu: 75m
+        memory: 128Mi
+      limits:
+        cpu: 150m
+        memory: 256Mi
     serviceAccounts:
       cilium:
         name: cilium
