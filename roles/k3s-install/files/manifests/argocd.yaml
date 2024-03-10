@@ -47,6 +47,12 @@ spec:
           jsonPointers:
             - /metadata/generation
             - /metadata/resourceVersion
+        resource.customizations.ignoreResourceUpdates.job: |
+          jqPathExpressions:
+            - '.'
+        resource.customizations.ignoreResourceUpdates.cilium.io_CiliumEndpoint: |
+          jqPathExpressions:
+            - '.'
         resource.ignoreResourceUpdatesEnabled: "true"
         server.rbac.log.enforce.enable: "false"
         timeout.hard.reconciliation: 0s
