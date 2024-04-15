@@ -5,7 +5,7 @@ metadata:
   namespace: kube-system
 spec:
   repo: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner
-  chart: nfs-subdir-external-provisioner 
+  chart: nfs-subdir-external-provisioner
   targetNamespace: kube-system
   version: "4.0.18"
   bootstrap: true

@@ -31,12 +31,12 @@ spec:
               clientSecret: $dex.authentik.clientSecret
               insecureEnableGroups: true
               scopes:
-            - openid
-            - profile
-            - email
-            name: authentik
-            type: oidc
-            id: authentik
+              - openid
+              - profile
+              - email
+              name: authentik
+              type: oidc
+              id: authentik
         exec.enabled: "false"
         resource.compareoptions: |
           ignoreDifferencesOnResourceUpdates: true
