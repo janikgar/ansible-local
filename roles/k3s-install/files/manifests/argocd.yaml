@@ -78,8 +78,8 @@ spec:
         url: https://argocd.home.lan
       params:
         create: true
-    controller.server.side.diff.enabled: "true"
-    controller.status.processors: "5"
+        controller.server.side.diff.enabled: "true"
+        controller.status.processors: "5"
         controller.operation.processors: "5"
         server.insecure: "true"
       rbac:

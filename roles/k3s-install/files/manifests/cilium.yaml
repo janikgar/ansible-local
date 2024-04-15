@@ -7,7 +7,7 @@ spec:
   repo: https://helm.cilium.io
   chart: cilium
   targetNamespace: kube-system
-  version: "1.14.7"
+  version: "1.15.4"
   valuesContent: |-
     bpf:
       hostLegacyRouting: false
