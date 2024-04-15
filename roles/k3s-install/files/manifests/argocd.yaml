@@ -20,7 +20,9 @@ spec:
     configs:
       cm:
         create: true
-        url: https://argocd.home.lan
+        accounts.admin: apiKey
+        admin.enabled: "true"
+        application.instanceLabelKey: argocd.argoproj.io/instance
         dex.config: |
           connectors:
           - config:
@@ -29,17 +31,21 @@ spec:
               clientSecret: $dex.authentik.clientSecret
               insecureEnableGroups: true
               scopes:
-                - openid
-                - profile
-                - email
+            - openid
+            - profile
+            - email
             name: authentik
             type: oidc
             id: authentik
-        admin.enabled: "true"
-        application.instanceLabelKey: argocd.argoproj.io/instance
         exec.enabled: "false"
         resource.compareoptions: |
           ignoreDifferencesOnResourceUpdates: true
+        resource.customizations.ignoreResourceUpdates.EndpointSlice: |
+          jsonPointers:
+            - /
+        resource.customizations.ignoreResourceUpdates.Job: |
+          jsonPointers:
+            - /
         resource.customizations.ignoreResourceUpdates.all: |
           jsonPointers:
             - /status
@@ -47,21 +53,34 @@ spec:
           jsonPointers:
             - /metadata/generation
             - /metadata/resourceVersion
-        resource.customizations.ignoreResourceUpdates.job: |
-          jqPathExpressions:
-            - '.'
-        resource.customizations.ignoreResourceUpdates.cilium.io_CiliumEndpoint: |
-          jqPathExpressions:
-            - '.'
+        resource.customizations.ignoreResourceUpdates.cilium.io: |
+          jsonPointers:
+            - /
+        resource.exclusions: |
+          - apiGroups:
+            - cilium.io
+            - k3s.cattle.io
+            - helm.cattle.io
+            - upgrade.cattle.io
+            kinds:
+            - '*'
+          - apiGroups:
+            - '*'
+            kinds:
+              - Job
+              - CiliumEndpoint
+              - EndpointSlice
+              - ComponentStatus
         resource.ignoreResourceUpdatesEnabled: "true"
         server.rbac.log.enforce.enable: "false"
         timeout.hard.reconciliation: 0s
         timeout.reconciliation: 180s
+        url: https://argocd.home.lan
       params:
         create: true
+    controller.server.side.diff.enabled: "true"
+    controller.status.processors: "5"
         controller.operation.processors: "5"
-        controller.status.processors: "2"
-        controller.kubectl.parallelism.limit: "10"
         server.insecure: "true"
       rbac:
         policy.csv: |-
@@ -176,3 +195,4 @@ spec:
         trigger.on-is-deployed: |
           - when: app.status.sync.status == 'Synced' and app.status.health.status == 'Healthy'
             send: [app-version-notification, alertmanager-notification]
+
