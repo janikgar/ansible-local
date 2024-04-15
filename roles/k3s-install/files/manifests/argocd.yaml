@@ -34,9 +34,9 @@ spec:
               - openid
               - profile
               - email
-              name: authentik
-              type: oidc
-              id: authentik
+            name: authentik
+            type: oidc
+            id: authentik
         exec.enabled: "false"
         resource.compareoptions: |
           ignoreDifferencesOnResourceUpdates: true
