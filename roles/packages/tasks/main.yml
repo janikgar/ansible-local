@@ -25,6 +25,12 @@
     - ntpdate
     - ntp
 
+- name: Install cifs
+  apt:
+    name: cifs-utils
+    state: latest
+  when: ansible_os_family == "Debian"
+
 - name: Install iscsi
   apt:
     name: open-iscsi
