@@ -7,11 +7,11 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "6.5.1"
+  version: "6.7.18"
   valuesContent: |-
     global:
       image:
-        tag: v2.10.2
+        tag: v2.10.9
     applicationSet:
       metrics:
         enabled: true
@@ -124,7 +124,7 @@ spec:
           enabled: true
     dex:
       image:
-        tag: v2.37.0
+        tag: v2.38.0
       volumeMounts:
         - mountPath: /etc/ssl/certs
           name: certs
