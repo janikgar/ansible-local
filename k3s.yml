@@ -1,0 +1,10 @@
+---
+- hosts: picluster_leader:picluster_server:picluster_agent
+  order: sorted
+  remote_user: ansible
+  roles:
+    - iptables
+    - k3s-configure
+    - k3s-get-config
+  become: yes
+

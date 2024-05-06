@@ -2,11 +2,11 @@
 - name: Download CA Cert
   uri:
     url: http://certs.home.lan/ca.crt
-    return_content: yes
+    return_content: true
   register: ca_cert
   delegate_to: localhost
-  become: no
-  run_once: yes
+  become: false
+  run_once: true
   retries: 10
   delay: 5
   until: ca_cert is not failed
@@ -14,11 +14,11 @@
 - name: Download Int Cert
   uri:
     url: http://certs.home.lan/int.crt
-    return_content: yes
+    return_content: true
   register: int_cert
   delegate_to: localhost
-  become: no
-  run_once: yes
+  become: false
+  run_once: true
   retries: 10
   delay: 5
   until: int_cert is not failed
@@ -46,10 +46,10 @@
   service:
     name: k3s
     state: restarted
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Restart K3s Agent
   service:
     name: k3s-agent
     state: restarted
-  ignore_errors: yes
+  ignore_errors: true

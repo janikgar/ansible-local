@@ -4,68 +4,77 @@
     url:  https://api.github.com/repos/prometheus/node_exporter/tags
     body_format: json
   register: ne_versions
-  run_once: yes
+  run_once: true
   delegate_to: localhost
-  become: no
+  become: false
 
 - name: Set latest Node Exporter version
   set_fact:
     latest_ne_version:  "{{ ne_versions.json[0].name }}"
 
-- name: Set architecture to download
+- name: Check if Node Exporter is up-to-date
+  shell: /usr/local/bin/node_exporter --version | grep $(echo "{{ latest_ne_version }}" | tr -d v) 
+  register: version_check_output
+  changed_when: false
+
+- name: Register if update is needed
   set_fact:
-    ne_arch:
-      armv7l: armv7
-      aarch64: arm64
-      i386: "386"
+    needs_update: "{{ version_check_output.rc == 1 }}"
 
-- name: Download latest Node Exporter
-  uri:
-    url: "https://github.com/prometheus/node_exporter/releases/download/{{ latest_ne_version }}/node_exporter-{{ latest_ne_version[1:]}}.linux-{{ ne_arch[ansible_facts.architecture] }}.tar.gz"
-    return_content: yes
-  register: node_exporter
+- name: Install/update Node Exporter
+  when: needs_update
+  block:
+  - name: Set architecture to download
+    set_fact:
+      ne_arch:
+        armv7l: armv7
+        aarch64: arm64
+        i386: "386"
 
-- name: Add script to nodes
-  copy:
-    content: "{{ node_exporter.content }}"
-    dest: "/tmp/node-exporter.tar.gz"
-    owner: root
-    group: root
-    mode: "0644"
+  - name: Download latest Node Exporter
+    uri:
+      url: "https://github.com/prometheus/node_exporter/releases/download/{{ latest_ne_version }}/node_exporter-{{ latest_ne_version[1:]}}.linux-{{ ne_arch[ansible_facts.architecture] }}.tar.gz"
+      return_content: true
+    register: node_exporter
 
-- name: Stop Node Exporter service (if it exists)
-  service:
-    name: node-exporter
-    state: stopped
-  ignore_errors: yes
+  - name: Add script to nodes
+    copy:
+      content: "{{ node_exporter.content }}"
+      dest: "/tmp/node-exporter.tar.gz"
+      owner: root
+      group: root
+      mode: "0644"
 
-- name: Ensure gzip / unzip are available
-  apt:
-    name: "{{ item }}"
-    state: latest
-  with_items:
-    - gzip
-    - zip
+  - name: Stop Node Exporter service (if it exists)
+    service:
+      name: node-exporter
+      state: stopped
+    ignore_errors: true
 
-- name: Extract binary
-  unarchive:
-    src: /tmp/node-exporter.tar.gz
-    include:
-      - "node_exporter-{{ latest_ne_version[1:] }}.linux-{{ ne_arch[ansible_facts.architecture] }}/node_exporter"
-    dest: /usr/local/bin
-    remote_src: yes
-    extra_opts:
-      - --strip-components
-      - "1"
+  - name: Ensure gzip / unzip are available
+    apt:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - gzip
+      - zip
 
-- name: Create service
-  copy:
-    src: node-exporter.service
-    dest: /etc/systemd/system
+  - name: Extract binary
+    unarchive:
+      src: /tmp/node-exporter.tar.gz
+      include:
+        - "node_exporter-{{ latest_ne_version[1:] }}.linux-{{ ne_arch[ansible_facts.architecture] }}/node_exporter"
+      dest: /usr/local/bin
+      remote_src: true
+      extra_opts:
+        - --strip-components
+        - "1"
+    notify:
+      - Restart node exporter
 
-- name: Start service
-  systemd:
-    name: node-exporter
-    state: started
-    enabled: yes
-    daemon_reload: yes
+  - name: Create/update service
+    copy:
+      src: files/node-exporter.service
+      dest: /etc/systemd/system
+    notify:
+      - Restart node exporter

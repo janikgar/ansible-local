@@ -1,73 +1,85 @@
 ---
-- name: Flush tables
-  shell: iptables -F
+- name: Check for Kube iptables
+  shell: iptables -S | egrep 'KUBE|CILIUM' | wc -l
+  register: iptables_kube_chains
+  changed_when: false
 
-- name: Accept localhost
-  iptables:
-    chain: INPUT
-    in_interface: lo
-    jump: ACCEPT
+- name: Set fact for Kube iptables chains
+  set_fact:
+    safe_to_flush: "{{ iptables_kube_chains.stdout == 0 }}"
 
-- name: Accept LAN TCP traffic on ports
-  with_nested:
-    - "{{ lan_ips }}"
-    - "{{ security_groups }}"
-  iptables:
-    chain: INPUT
-    source: "{{ item[0] }}"
-    protocol: tcp
-    destination_port: "{{ item[1].port }}"
-    comment: "Allow LAN traffic to {{ item[1].comment }}"
-    jump: ACCEPT
-    wait: "10"
+- name: Prepare iptables
+  when: safe_to_flush
+  block:
+  - name: Flush tables
+    shell: iptables -F
 
-- name: Accept LAN UDP traffic on ports
-  with_nested:
-    - "{{ lan_ips }}"
-    - "{{ security_groups }}"
-  iptables:
-    chain: INPUT
-    source: "{{ item[0] }}"
-    protocol: udp
-    destination_port: "{{ item[1].port }}"
-    comment: "Allow LAN traffic to {{ item[1].comment }}"
-    jump: ACCEPT
-    wait: "10"
+  - name: Accept localhost
+    iptables:
+      chain: INPUT
+      in_interface: lo
+      jump: ACCEPT
 
-- name: Accept all traffic on DNS, HTTP/S ports
-  loop:
-  - { port: "53", comment: "DNS" }
-  - { port: "80", comment: "HTTP" }
-  - { port: "443", comment: "HTTPS" }
-  iptables:
-    chain: INPUT
-    protocol: tcp
-    destination_port: "{{ item.port }}"
-    comment: "Allow all traffic to {{ item.comment }}"
-    jump: ACCEPT
-    wait: "10"
+  - name: Accept LAN TCP traffic on ports
+    with_nested:
+      - "{{ lan_ips }}"
+      - "{{ security_groups }}"
+    iptables:
+      chain: INPUT
+      source: "{{ item[0] }}"
+      protocol: tcp
+      destination_port: "{{ item[1].port }}"
+      comment: "Allow LAN traffic to {{ item[1].comment }}"
+      jump: ACCEPT
+      wait: "10"
 
-# - name: Reject other LAN traffic
-#   loop: "{{ lan_ips }}"
-#   iptables:
-#     chain: INPUT
-#     protocol: all
-#     source: "{{ item }}"
-#     comment: "Reject other LAN traffic"
-#     jump: REJECT
-#     wait: "10"
+  - name: Accept LAN UDP traffic on ports
+    with_nested:
+      - "{{ lan_ips }}"
+      - "{{ security_groups }}"
+    iptables:
+      chain: INPUT
+      source: "{{ item[0] }}"
+      protocol: udp
+      destination_port: "{{ item[1].port }}"
+      comment: "Allow LAN traffic to {{ item[1].comment }}"
+      jump: ACCEPT
+      wait: "10"
 
-# - name: Drop other external traffic
-#   iptables:
-#     chain: INPUT
-#     protocol: all
-#     comment: "Drop other traffic"
-#     jump: DROP
-  
-- name: Save iptables
-  shell: iptables-save
+  - name: Accept all traffic on DNS, HTTP/S ports
+    loop:
+    - { port: "53", comment: "DNS" }
+    - { port: "80", comment: "HTTP" }
+    - { port: "443", comment: "HTTPS" }
+    iptables:
+      chain: INPUT
+      protocol: tcp
+      destination_port: "{{ item.port }}"
+      comment: "Allow all traffic to {{ item.comment }}"
+      jump: ACCEPT
+      wait: "10"
 
-- name: Restart
-  reboot:
-    reboot_timeout: 300
-  when: iptables_reboot
+  # - name: Reject other LAN traffic
+  #   loop: "{{ lan_ips }}"
+  #   iptables:
+  #     chain: INPUT
+  #     protocol: all
+  #     source: "{{ item }}"
+  #     comment: "Reject other LAN traffic"
+  #     jump: REJECT
+  #     wait: "10"
+
+  # - name: Drop other external traffic
+  #   iptables:
+  #     chain: INPUT
+  #     protocol: all
+  #     comment: "Drop other traffic"
+  #     jump: DROP
+    
+  - name: Save iptables
+    shell: iptables-save
+
+  - name: Restart
+    reboot:
+      reboot_timeout: 300
+    when: iptables_reboot

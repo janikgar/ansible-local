@@ -1,0 +1,5 @@
+- name: Reload systemd service
+  systemd:
+    name: k3s
+    state: restarted
+    daemon_reload: true

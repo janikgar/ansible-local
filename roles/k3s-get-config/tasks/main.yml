@@ -14,6 +14,7 @@
   delegate_to: "{{ item }}"
   loop: "{{ groups['picluster_leader'] }}"
   run_once: true
+  changed_when: false
 
 - name: Update IP address in local Kubeconfig
   replace:
@@ -23,3 +24,4 @@
   delegate_to: 127.0.0.1
   become: false
   run_once: true
+  changed_when: false

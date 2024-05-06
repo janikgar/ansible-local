@@ -1,5 +1,5 @@
 - name: Instantiate Legacy IPTables
   import_tasks: legacy-iptables.yml
 
-- name: Security Groups
+- name: IPTables Rules
   import_tasks: iptables.yml

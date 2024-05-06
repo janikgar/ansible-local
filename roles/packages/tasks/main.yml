@@ -16,7 +16,7 @@
       state: latest
     when: ansible_os_family == "Debian"
 
-- name: Install ntpdate
+- name: Install common packages
   apt:
     name: "{{ item }}"
     state: latest
@@ -24,37 +24,23 @@
   with_items:
     - ntpdate
     - ntp
-
-- name: Install cifs
-  apt:
-    name: cifs-utils
-    state: latest
-  when: ansible_os_family == "Debian"
-
-- name: Install iscsi
-  apt:
-    name: open-iscsi
-    state: latest
-  when: ansible_os_family == "Debian"
-
-- name: Install snmpd
-  apt:
-    name: "{{ item }}"
-    state: latest
-  when: ansible_os_family == "Debian"
-  with_items:
+    - cifs-utils
+    - open-iscsi
     - snmpd
     - snmp-mibs-downloader
+
 - name: Download and enable Raspberry Pi SNMP Extend
   get_url:
     url:  https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/raspberry.sh 
     dest: /etc/snmp/raspberry.sh
     mode: 0700
+
 - name: Ensure Debian-snmp user can execute file
   copy:
     dest: /etc/sudoers.d/011_snmp
     content: "Debian-snmp ALL=(ALL) NOPASSWD: /bin/sh /etc/snmp/raspberry.sh\n"
     mode: 0440
+
 - name: Add snmpd.conf
   copy:
     src: snmpd.conf
@@ -62,13 +48,13 @@
     owner: root
     group: root
     mode: "0600"
+  notify:
+    - Reload snmp service
+
 - name: Update service command line
   lineinfile:
     path: /lib/systemd/system/snmpd.service
     line: ExecStart=/usr/sbin/snmpd -LS6d -Lf /dev/null -u Debian-snmp -g Debian-snmp -I -smux,mteTrigger,mteTriggerConf -f -p /run/snmpd.pid
     regexp: '^ExecStart'
-- name: Reload daemon and restart service
-  systemd:
-    name: snmpd
-    daemon_reload: yes
-    state: restarted
+  notify:
+    - Reload snmp service
