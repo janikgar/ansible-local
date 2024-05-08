@@ -27,6 +27,13 @@ spec:
         - 10.43.0.0/16
     operator:
       replicas: 1
+      resources:
+        requests:
+          cpu: 15m
+          memory: 64Mi
+        limits:
+          cpu: 20m
+          memory: 96Mi
       unmanagedPodWatcher:
         restart: true
       prometheus:
