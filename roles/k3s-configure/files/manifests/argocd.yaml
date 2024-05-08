@@ -13,6 +13,13 @@ spec:
       image:
         tag: v2.10.9
     applicationSet:
+      resources:
+        requests:
+          cpu: 8m
+          memory: 48Mi
+        limits:
+          cpu: 20m
+          memory: 64Mi
       metrics:
         enabled: true
         serviceMonitor:
@@ -106,6 +113,13 @@ spec:
         serviceMonitor:
           enabled: true
     repoServer:
+      resources:
+        requests:
+          cpu: 25m
+          memory: 128Mi
+        limits:
+          cpu: 200m
+          memory: 256Mi
       metrics:
         enabled: true
         serviceMonitor:
@@ -123,6 +137,15 @@ spec:
         serviceMonitor:
           enabled: true
     dex:
+      initImage:
+        resources:
+          requests: &dexResources
+            cpu: 30m
+            memory: 64Mi
+          limits:
+            cpu: 50m
+            memory: 96Mi
+      resources: *dexResources
       image:
         tag: v2.38.0
       volumeMounts:
@@ -138,6 +161,13 @@ spec:
         serviceMonitor:
           enabled: true
     redis:
+      resources:
+        requests:
+          cpu: 5m
+          memory: 16Mi
+        limits:
+          cpu: 20m
+          memory: 64Mi
       image:
         tag: 7.2.4-alpine
       metrics:
@@ -161,6 +191,13 @@ spec:
         sshPrivateKey: |
           REPLACE WITH APPROPRIATE KEY
     notifications:
+      resources:
+        requests:
+          cpu: 15m
+          memory: 48Mi
+        limits:
+          cpu: 25m
+          memory: 128Mi
       notifiers:
         service.webhook.consul-app-version: |
           url: https://consul.home.lan/v1/kv/
