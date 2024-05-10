@@ -106,7 +106,7 @@ spec:
           memory: 50Mi
         limits:
           cpu: 100m
-          memory: 96Mi
+          memory: 200Mi
       ingress:
         enabled: true
         ingressClassName: nginx
