@@ -64,7 +64,7 @@
     become: false
 
   - name: Initialize leader
-    command: /tmp/k3s_install --flannel-backend none --disable traefik --disable local-storage --disable coredns --kubelet-arg system-reserved=cpu=1,memory=1024Mi server
+    command: /tmp/k3s_install --flannel-backend none --disable traefik --disable coredns --kubelet-arg system-reserved=cpu=1200m,memory=1792Mi server
     environment:
       K3S_TOKEN: "{{ node_token.stdout if new_k3s_install }}"
       INSTALL_K3S_VERSION: "{{ k3s_version }}"

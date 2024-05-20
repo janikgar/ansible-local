@@ -33,8 +33,6 @@ ExecStart=/usr/local/bin/k3s \
         '--disable' \
         'traefik' \
         '--disable' \
-        'local-storage' \
-        '--disable' \
         'coredns' \
         '--kubelet-arg' \
         'system-reserved=cpu=1200m,memory=1792Mi' \
