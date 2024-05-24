@@ -184,7 +184,7 @@ spec:
           cpu: 20m
           memory: 64Mi
       image:
-        tag: 7.2.4-alpine
+        tag: 7.2.5-alpine
         imagePullPolicy: Always
       metrics:
         enabled: true
