@@ -7,11 +7,11 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "6.7.18"
+  version: "6.11.1"
   valuesContent: |-
     global:
       image:
-        tag: v2.10.9
+        tag: v2.11.2
     applicationSet:
       resources:
         requests:
@@ -24,6 +24,10 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
+      readinessProbe:
+        enabled: true
+      livenessProbe:
+        enabled: true
     configs:
       cm:
         create: true
@@ -167,6 +171,10 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
+      livenessProbe:
+        enabled: true
+      readinessProbe:
+        enabled: true
     redis:
       resources:
         requests:
@@ -177,10 +185,15 @@ spec:
           memory: 64Mi
       image:
         tag: 7.2.4-alpine
+        imagePullPolicy: Always
       metrics:
         enabled: true
         serviceMonitor:
           enabled: true
+      readinessProbe:
+        enabled: true
+      livenessProbe:
+        enabled: true
     repositories:
       all:
         url: git@github.com:janikgar/home-k8s.git
