@@ -91,6 +91,7 @@
     become: false
 
 - name: Ensure SystemD services are up-to-date
+  when: k3s_role == 'leader'
   block:
     - name: K3s SystemD service
       copy:

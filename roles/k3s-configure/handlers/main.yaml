@@ -1,5 +1,13 @@
-- name: Reload systemd service
+- name: Reload k3s systemd service
   systemd:
     name: k3s
     state: restarted
     daemon_reload: true
+  when: k3s_role == 'leader'
+
+- name: Reload k3s-agent systemd service
+  systemd:
+    name: k3s-agent
+    state: restarted
+    daemon_reload: true
+  when: k3s_role == 'leader'
