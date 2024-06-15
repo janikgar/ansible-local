@@ -24,6 +24,7 @@ TimeoutStartSec=0
 Restart=always
 RestartSec=5s
 ExecStartPre=/bin/sh -xc '! /usr/bin/systemctl is-enabled --quiet nm-cloud-setup.service'
+ExecStartPre=sysctl -p /etc/sysctl.d/90-kubelet.conf
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
 ExecStart=/usr/local/bin/k3s \
@@ -36,4 +37,6 @@ ExecStart=/usr/local/bin/k3s \
         'coredns' \
         '--kubelet-arg' \
         'system-reserved=cpu=1200m,memory=1792Mi' \
+        '--kubelet-arg' \
+        'protect-kernel-defaults'
         'server' \

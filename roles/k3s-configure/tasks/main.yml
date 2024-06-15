@@ -93,6 +93,13 @@
 - name: Ensure SystemD services are up-to-date
   when: k3s_role == 'leader'
   block:
+    - name: Sysctl config
+      copy:
+        src: files/sysctl/90-kubelet.conf
+        dest: /etc/sysctl.d
+        owner: root
+        group: root
+        mode: "0400"
     - name: K3s SystemD service
       copy:
         src: files/systemd/k3s.service
@@ -101,7 +108,7 @@
         group: root
         mode: "0400"
       notify:
-        - Reload systemd service
+        - Reload k3s systemd service
     - name: K3s SystemD service environment file
       copy:
         src: files/systemd/k3s.service.env

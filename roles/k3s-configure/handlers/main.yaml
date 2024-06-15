@@ -10,4 +10,4 @@
     name: k3s-agent
     state: restarted
     daemon_reload: true
-  when: k3s_role == 'leader'
+  when: k3s_role != 'leader'
