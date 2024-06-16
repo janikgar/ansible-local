@@ -77,7 +77,7 @@
       ansible.builtin.unarchive:
         src: /tmp/node-exporter.tar.gz
         include:
-          - "node_exporter-{{ nv[1:] }}.linux-{{ ne_arch[ansible_facts.architecture] }}/node_exporter"
+          - "node_exporter-{{ nv[1:] }}.linux-{{ arch[ansible_facts.architecture] }}/node_exporter"
         dest: /usr/local/bin
         remote_src: true
         extra_opts:
