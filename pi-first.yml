@@ -1,13 +1,15 @@
 ---
-- hosts: linux:picluster_leader:picluster_server:pi.home.lan
+- name: Raspberry Pi First run
+  hosts: linux:picluster_leader:picluster_server:pi.home.lan
   order: sorted
   remote_user: pi
   roles:
-    - pi-firstrun
+    - pi_firstrun
 
-- hosts: linux:picluster_leader:picluster_server:pi.home.lan
+- name: Update packages
+  hosts: linux:picluster_leader:picluster_server:pi.home.lan
   order: sorted
   remote_user: ansible
   roles:
     - packages
-  become: yes
+  become: true

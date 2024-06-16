@@ -1,27 +1,30 @@
 ---
 - name: Get hostname
-  shell: "raspi-config nonint get_hostname"
+  ansible.builtin.command: "raspi-config nonint get_hostname"
   register: pi_hostname
-  changed_when: False
+  changed_when: false
 
 - name: Set hostname
-  shell: "raspi-config nonint do_hostname {{ inventory_hostname }}"
+  ansible.builtin.command: "raspi-config nonint do_hostname {{ inventory_hostname }}"
   when: pi_hostname.stdout != inventory_hostname
+  changed_when: true
 
 - name: Check if FS is expandable
-  shell: "raspi-config nonint get_can_expand"
+  ansible.builtin.command: "raspi-config nonint get_can_expand"
   register: fs_filled
-  changed_when: False
+  changed_when: false
 
 - name: Expand Filesystem
-  shell: "raspi-config nonint do_expand_rootfs"
+  ansible.builtin.command: "raspi-config nonint do_expand_rootfs"
   when: fs_filled.stdout != '0'
+  changed_when: true
 
 - name: Set GPU memory split
-  shell: raspi-config nonint do_memory_split 16
+  ansible.builtin.command: raspi-config nonint do_memory_split 16
+  changed_when: true
 
 - name: Add rc.local
-  copy:
+  ansible.builtin.copy:
     src: rc.local
     dest: /etc/rc.local
     owner: root
@@ -29,7 +32,7 @@
     mode: "0755"
 
 - name: Add LED service
-  copy:
+  ansible.builtin.copy:
     src: led.service
     dest: /lib/systemd/system/led.service
     owner: root
@@ -37,16 +40,16 @@
     mode: "0644"
 
 - name: Enable & start LED service
-  service:
+  ansible.builtin.service:
     name: led
-    enabled: yes
+    enabled: true
     state: restarted
 
 - name: Set server fact
-  set_fact:
+  ansible.builtin.set_fact:
     k3s_role: "{{ k3s_role }}"
 
 - name: Reboot for file system expansion
-  reboot:
+  ansible.builtin.reboot:
     reboot_timeout: 600
   when: fs_filled.stdout != '0'

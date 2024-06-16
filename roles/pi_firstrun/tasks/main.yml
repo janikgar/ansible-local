@@ -1,19 +1,20 @@
 - name: Set password to non-default
-  user:
+  ansible.builtin.user:
     name: pi
     update_password: always
     password: $6$wpHezfpR7vZr.eMf$zBL6CJKQ5ITU0aFLlagJziogrXEbvdz5zNCKV9y7ul9z4oCrSy/VbFH6FUGP4ziQLMquHfQSJuZL2u1uy4HdC0
-  become: yes
+  become: true
 
 - name: Create SSH directory
-  file:
+  ansible.builtin.file:
     dest: /home/pi/.ssh/
     state: directory
     owner: pi
     group: pi
+    mode: '0755'
 
 - name: Add SSH key to authorized_keys
-  copy:
+  ansible.builtin.copy:
     content: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCq0qnsZESMxrijyNKeBLHhfNJDf+ewxwlnq0kW9EG3LGU5qytNyFvpxKO94fDfqmCKF9zVMZBpYL8iRs3BFPDWFD4mC6Dnw3DQD3S+RTTRTLopanb8b76e2BQe9BB2HYtriHi9M9oL9HjX56VgOiXigkgI7B06nDNd0PgZ0tLaHQxQwIkW1J4QDh8HNYyO+ugfTw13+FKxw6C7o/sXoSYdYxm5fu4er2M4RItsk6rIo2rxrB98O2VCcjwpk26rCNvNr0iPtQUnNZyaO9kRd0aMMLx1MPb4gI/gdmlUcaUXu1EIB+LJe+tW2t7m3IRCxHWbnKiYxi2n02AhgJpd/eDFaV6DjCAWnJH4mM73BtkaHA53LigR5buiguTc1mYIetwyJptA3o5ykI2frMDS1gQghe4EZbnGw8dsAOwVdZkn24AP7IzUOgz1DZcXktcfzrI4BpzWnwPjguqCXFgKAzeZLtYewek2J5yAX203UWi+jExqt2lOEduYVp9dXuxntB6fXvP61qk9Qt4mu4Ksh9gPZRAeudNHcSn9AKO/EUYg+qwae7DgM9MfUaeFEDTZTS7Eh62lBY+jsTOpO6mBCU1LElWn2qfz6mP/IrBMZPylDpeZaDU7UEHId/oy42MGfm3rjTtd4AE7wbg3nqy74boDn8T4kgtLeyAxhTpqKKWOVQ==
     dest: /home/pi/.ssh/authorized_keys
     owner: pi
@@ -21,34 +22,35 @@
     mode: "0444"
 
 - name: Add Ansible user
-  user:
+  ansible.builtin.user:
     name: ansible
-    groups: 
+    groups:
       - sudo
-  become: yes
+  become: true
 
 - name: Create Ansible SSH directory
-  file:
+  ansible.builtin.file:
     dest: /home/ansible/.ssh/
     state: directory
     owner: ansible
     group: ansible
-  become: yes
+    mode: '0755'
+  become: true
 
 - name: Add Ansible SSH key
-  copy:
+  ansible.builtin.copy:
     content: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDVc79xYhCJ3nUOKADN/+uZ2b0oSR704Lo01HnZLoKLVHUOYpyejHe1zrEZ72heoO+32cx8ZZ2yet8iz4HtFbkVzGeTTien1wuXIq/DRi+NGmb14RImM392A/nAzXAtX/VPqrGl7ajwyU0uDUj5VF1Fh/ZlfqePQPlTM1JqlrXzRSo3jeK3Ha5JQ6x44DhmioqSDKzM40a2LdVCQ2RyFDoiyMuzUiISkmV/Wu62RIrvNvbCvNRNlVD8IGOOs0KrzmVbsmvltSWO+TyvSCCOa03iFttWodw250PYthQhyn4n5mDMhKuw2ZOtxgN26PELHc5EkFCt+dghkhhDH/VMvkz5
     dest: /home/ansible/.ssh/authorized_keys
     owner: ansible
     group: ansible
     mode: "0444"
-  become: yes
+  become: true
 
 - name: Add Ansible NOPASSWD sudo
-  copy:
+  ansible.builtin.copy:
     content: "ansible ALL=(ALL) NOPASSWD: ALL"
     dest: /etc/sudoers.d/010_ansible-nopasswd
     owner: root
     group: root
     mode: "0400"
-  become: yes
+  become: true

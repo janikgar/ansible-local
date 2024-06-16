@@ -1,5 +1,5 @@
 - name: Reload snmp service
-  systemd:
+  ansible.builtin.systemd:
     name: snmpd
-    daemon_reload: yes
+    daemon_reload: true
     state: restarted

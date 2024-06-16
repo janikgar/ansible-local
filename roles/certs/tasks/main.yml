@@ -1,6 +1,6 @@
 ---
 - name: Download CA Cert
-  uri:
+  ansible.builtin.uri:
     url: http://certs.home.lan/ca.crt
     return_content: true
   register: ca_cert
@@ -12,7 +12,7 @@
   until: ca_cert is not failed
 
 - name: Download Int Cert
-  uri:
+  ansible.builtin.uri:
     url: http://certs.home.lan/int.crt
     return_content: true
   register: int_cert
@@ -24,7 +24,7 @@
   until: int_cert is not failed
 
 - name: Add CA cert to nodes
-  copy:
+  ansible.builtin.copy:
     content: "{{ ca_cert.content }}"
     dest: "/usr/local/share/ca-certificates/ca_home_lan.crt"
     owner: root
@@ -32,7 +32,7 @@
     mode: "0400"
 
 - name: Add Int cert to nodes
-  copy:
+  ansible.builtin.copy:
     content: "{{ int_cert.content }}"
     dest: "/usr/local/share/ca-certificates/star_home_lan.crt"
     owner: root
@@ -40,16 +40,13 @@
     mode: "0400"
 
 - name: Update CA certs
-  command: update-ca-certificates
+  ansible.builtin.command: update-ca-certificates
+  register: update_cert
+  changed_when: ( update_cert.stdout | regex_findall('(\\d+) (?:added|removed)') | map('int') | sum ) != 0
+  notify:
+    - Reload k3s systemd service
+    - Reload k3s-agent systemd service
 
-- name: Restart K3s
-  service:
-    name: k3s
-    state: restarted
-  ignore_errors: true
-
-- name: Restart K3s Agent
-  service:
-    name: k3s-agent
-    state: restarted
-  ignore_errors: true
+- name: DEBUG
+  ansible.builtin.debug:
+    msg: "{{ update_cert.stdout | regex_findall('(\\d+) (?:added|removed)') | map('int') | sum }}"

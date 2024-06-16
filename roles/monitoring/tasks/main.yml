@@ -1,80 +1,97 @@
 ---
+- name: See if Node Exporter exists
+  ansible.builtin.service_facts:
+
+- name: Set Node Exporter status fact
+  ansible.builtin.set_fact:
+    node_exporter_enabled: |
+      {{ ['status'] | map('extract', ['node-exporter.service'] | map('extract', ansible_facts.services) | first) | first == 'enabled' }}
+
 - name: Get Node Exporter versions
-  uri:
-    url:  https://api.github.com/repos/prometheus/node_exporter/tags
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/prometheus/node_exporter/tags
     body_format: json
-  register: ne_versions
+  register: nvsions
   run_once: true
   delegate_to: localhost
   become: false
 
 - name: Set latest Node Exporter version
-  set_fact:
-    latest_ne_version:  "{{ ne_versions.json[0].name }}"
+  ansible.builtin.set_fact:
+    nv: "{{ nvsions.json[0].name }}"
 
 - name: Check if Node Exporter is up-to-date
-  shell: /usr/local/bin/node_exporter --version | grep $(echo "{{ latest_ne_version }}" | tr -d v) 
+  ansible.builtin.shell: |
+    set -o pipefail
+    /usr/local/bin/node_exporter --version | grep $(echo "{{ nv }}" | tr -d v)
+  args:
+    executable: /bin/bash
   register: version_check_output
+  failed_when: false
   changed_when: false
 
 - name: Register if update is needed
-  set_fact:
+  ansible.builtin.set_fact:
     needs_update: "{{ version_check_output.rc == 1 }}"
 
 - name: Install/update Node Exporter
   when: needs_update
   block:
-  - name: Set architecture to download
-    set_fact:
-      ne_arch:
-        armv7l: armv7
-        aarch64: arm64
-        i386: "386"
+    - name: Set architecture to download
+      ansible.builtin.set_fact:
+        arch:
+          armv7l: armv7
+          aarch64: arm64
+          i386: "386"
 
-  - name: Download latest Node Exporter
-    uri:
-      url: "https://github.com/prometheus/node_exporter/releases/download/{{ latest_ne_version }}/node_exporter-{{ latest_ne_version[1:]}}.linux-{{ ne_arch[ansible_facts.architecture] }}.tar.gz"
-      return_content: true
-    register: node_exporter
+    - name: Download latest Node Exporter
+      ansible.builtin.uri:
+        url: |
+          https://github.com/prometheus/node_exporter/releases/download/{{ nv }}/node_exporter-{{ nv[1:] }}.linux-{{ arch[ansible_facts.architecture] }}.tar.gz
+        return_content: true
+      register: node_exporter
 
-  - name: Add script to nodes
-    copy:
-      content: "{{ node_exporter.content }}"
-      dest: "/tmp/node-exporter.tar.gz"
-      owner: root
-      group: root
-      mode: "0644"
+    - name: Add script to nodes
+      ansible.builtin.copy:
+        content: "{{ node_exporter.content }}"
+        dest: "/tmp/node-exporter.tar.gz"
+        owner: root
+        group: root
+        mode: "0644"
 
-  - name: Stop Node Exporter service (if it exists)
-    service:
-      name: node-exporter
-      state: stopped
-    ignore_errors: true
+    - name: Stop Node Exporter service (if it exists)
+      ansible.builtin.service:
+        name: node-exporter
+        state: stopped
+      when: node_exporter_enabled
 
-  - name: Ensure gzip / unzip are available
-    apt:
-      name: "{{ item }}"
-      state: latest
-    with_items:
-      - gzip
-      - zip
+    - name: Ensure gzip / unzip are available
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - gzip
+        - zip
 
-  - name: Extract binary
-    unarchive:
-      src: /tmp/node-exporter.tar.gz
-      include:
-        - "node_exporter-{{ latest_ne_version[1:] }}.linux-{{ ne_arch[ansible_facts.architecture] }}/node_exporter"
-      dest: /usr/local/bin
-      remote_src: true
-      extra_opts:
-        - --strip-components
-        - "1"
-    notify:
-      - Restart node exporter
+    - name: Extract binary
+      ansible.builtin.unarchive:
+        src: /tmp/node-exporter.tar.gz
+        include:
+          - "node_exporter-{{ nv[1:] }}.linux-{{ ne_arch[ansible_facts.architecture] }}/node_exporter"
+        dest: /usr/local/bin
+        remote_src: true
+        extra_opts:
+          - --strip-components
+          - "1"
+      notify:
+        - Restart node exporter
 
-  - name: Create/update service
-    copy:
-      src: files/node-exporter.service
-      dest: /etc/systemd/system
-    notify:
-      - Restart node exporter
+    - name: Create/update service
+      ansible.builtin.copy:
+        src: files/node-exporter.service
+        dest: /etc/systemd/system
+        owner: root
+        group: root
+        mode: '0400'
+      notify:
+        - Restart node exporter

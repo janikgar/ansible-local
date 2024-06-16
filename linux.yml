@@ -1,8 +1,9 @@
 ---
-- hosts:
+- name: Linux Packages and Monitoring
+  hosts:
     - linux
     - picluster_leader:picluster_server:picluster_agent
   roles:
     - packages
     - monitoring
-  become: yes
+  become: true

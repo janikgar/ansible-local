@@ -1,0 +1,7 @@
+profile: production
+
+kinds:
+  - tasks: "**/tasks/*.yml"
+
+exclude_paths:
+  - "**/files/**/*.yaml"

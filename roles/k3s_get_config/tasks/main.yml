@@ -1,13 +1,13 @@
 ---
 - name: Get server node url
-  set_fact:
+  ansible.builtin.set_fact:
     server_url: "{{ ansible_facts.default_ipv4.address }}"
   register: global_server_url
   delegate_to: "{{ item }}"
   loop: "{{ groups['picluster_leader'] }}"
 
 - name: Get Kubeconfig
-  fetch:
+  ansible.builtin.fetch:
     src: /etc/rancher/k3s/k3s.yaml
     dest: ~/.kube/config
     flat: true
@@ -17,7 +17,7 @@
   changed_when: false
 
 - name: Update IP address in local Kubeconfig
-  replace:
+  ansible.builtin.replace:
     path: ~/.kube/config
     regexp: 127.0.0.1
     replace: "{{ global_server_url['results'][0].item }}"

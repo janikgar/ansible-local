@@ -1,25 +1,8 @@
 ---
-- name: Upgrade packages with rescue
-  block:
-  - name: Update packages through apt
-    apt:
-      name: "*"
-      state: latest
-    when: ansible_os_family == "Debian"
-  rescue:
-  - name: Wait 10 seconds
-    wait_for:
-      timeout: 10
-  - name: Update packages through apt (2nd attempt)
-    apt:
-      name: "*"
-      state: latest
-    when: ansible_os_family == "Debian"
-
 - name: Install common packages
-  apt:
+  ansible.builtin.apt:
     name: "{{ item }}"
-    state: latest
+    state: present
   when: ansible_os_family == "Debian"
   with_items:
     - ntpdate
@@ -29,20 +12,37 @@
     - snmpd
     - snmp-mibs-downloader
 
+- name: Upgrade packages with rescue
+  block:
+    - name: Update packages through apt # package-list
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+      when: ansible_os_family == "Debian"
+  rescue:
+    - name: Wait 10 seconds
+      ansible.builtin.wait_for:
+        timeout: 10
+    - name: Update packages through apt (2nd attempt)
+      ansible.builtin.apt:
+        name: "*"
+        state: latest
+      when: ansible_os_family == "Debian"
+
 - name: Download and enable Raspberry Pi SNMP Extend
-  get_url:
-    url:  https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/raspberry.sh 
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/raspberry.sh
     dest: /etc/snmp/raspberry.sh
-    mode: 0700
+    mode: '0700'
 
 - name: Ensure Debian-snmp user can execute file
-  copy:
+  ansible.builtin.copy:
     dest: /etc/sudoers.d/011_snmp
     content: "Debian-snmp ALL=(ALL) NOPASSWD: /bin/sh /etc/snmp/raspberry.sh\n"
-    mode: 0440
+    mode: '0440'
 
 - name: Add snmpd.conf
-  copy:
+  ansible.builtin.copy:
     src: snmpd.conf
     dest: /etc/snmp/snmpd.conf
     owner: root
@@ -52,7 +52,7 @@
     - Reload snmp service
 
 - name: Update service command line
-  lineinfile:
+  ansible.builtin.lineinfile:
     path: /lib/systemd/system/snmpd.service
     line: ExecStart=/usr/sbin/snmpd -LS6d -Lf /dev/null -u Debian-snmp -g Debian-snmp -I -smux,mteTrigger,mteTriggerConf -f -p /run/snmpd.pid
     regexp: '^ExecStart'

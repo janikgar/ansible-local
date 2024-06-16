@@ -1,20 +1,21 @@
 ---
 - name: Raspi Config setup
-  import_tasks: raspi-config.yml
+  ansible.builtin.import_tasks: raspi-config.yml
 
 - name: Replace rsyslog logrotate Config
-  copy:
+  ansible.builtin.copy:
     src: rsyslog
     dest: /etc/logrotate.d/rsyslog
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Back Up old MOTD
-  command: cp /etc/motd /etc/motd.old
+  ansible.builtin.command: cp /etc/motd /etc/motd.old
+  changed_when: true
 
 - name: Add new MOTD
-  copy:
+  ansible.builtin.copy:
     src: files/motd
     dest: /etc/motd
     owner: root
