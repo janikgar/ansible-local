@@ -7,11 +7,11 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "6.11.1"
+  version: "7.1.3"
   valuesContent: |-
     global:
       image:
-        tag: v2.11.2
+        tag: v2.11.3
     applicationSet:
       resources:
         requests:
@@ -158,7 +158,7 @@ spec:
             memory: 96Mi
       resources: *dexResources
       image:
-        tag: v2.38.0
+        tag: v2.40.0-distroless
       volumeMounts:
         - mountPath: /etc/ssl/certs
           name: certs
