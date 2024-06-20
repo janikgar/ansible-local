@@ -158,7 +158,7 @@ spec:
             memory: 96Mi
       resources: *dexResources
       image:
-        tag: v2.40.0-distroless
+        tag: sha256-6e72da1351dd26680555650d4988bdd37c2ebd576aa7442650311c987882b1d4
       volumeMounts:
         - mountPath: /etc/ssl/certs
           name: certs
