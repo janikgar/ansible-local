@@ -1,0 +1,29 @@
+---
+- name: Shut down node
+  become: true
+  hosts: picluster_leader:picluster_server:picluster_agent
+  tasks:
+    - name: Wake picluster-01
+      community.general.shutdown: {}
+      tags:
+        - picluster-01
+      delegate_to: picluster-01.home.lan
+      run_once: true
+    - name: Wake picluster-02
+      community.general.shutdown: {}
+      tags:
+        - picluster-02
+      delegate_to: picluster-02.home.lan
+      run_once: true
+    - name: Wake picluster-03
+      community.general.shutdown: {}
+      tags:
+        - picluster-03
+      delegate_to: picluster-03.home.lan
+      run_once: true
+    - name: Wake picluster-04
+      community.general.shutdown: {}
+      tags:
+        - picluster-04
+      delegate_to: picluster-04.home.lan
+      run_once: true

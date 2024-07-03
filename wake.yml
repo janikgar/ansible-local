@@ -1,0 +1,24 @@
+---
+- name: Wake node
+  hosts: localhost
+  tasks:
+    - name: Wake picluster-01
+      community.general.wakeonlan:
+        mac: dc:a6:32:80:75:8c
+      tags:
+        - picluster-01
+    - name: Wake picluster-02
+      community.general.wakeonlan:
+        mac: dc:a6:32:9b:c7:19
+      tags:
+        - picluster-02
+    - name: Wake picluster-03
+      community.general.wakeonlan:
+        mac: dc:a6:32:80:77:a6
+      tags:
+        - picluster-03
+    - name: Wake picluster-04
+      community.general.wakeonlan:
+        mac: dc:a6:32:80:74:f9
+      tags:
+        - picluster-04
