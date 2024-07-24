@@ -32,8 +32,8 @@ spec:
           cpu: 15m
           memory: 64Mi
         limits:
-          cpu: 20m
-          memory: 96Mi
+          cpu: 50m
+          memory: 128Mi
       unmanagedPodWatcher:
         restart: true
       prometheus:
