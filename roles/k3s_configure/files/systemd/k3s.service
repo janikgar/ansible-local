@@ -41,6 +41,4 @@ ExecStart=/usr/local/bin/k3s \
         'system-reserved=cpu=1200m,memory=1792Mi' \
         '--kubelet-arg' \
         'protect-kernel-defaults' \
-        '--kube-apiserver-arg' \
-        'vmodule=trace=1'
         'server' \

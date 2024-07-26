@@ -221,9 +221,9 @@ spec:
       notifiers:
         service.webhook.consul-app-version: |
           url: https://consul.home.lan/v1/kv/
-          service.alertmanager: |
-            targets:
-              - alertmanager-operated.prometheus.svc.cluster.local:9093
+        service.alertmanager: |
+          targets:
+            - alertmanager-operated.prometheus.svc.cluster.local:9093
       metrics:
         enabled: true
         serviceMonitor:
