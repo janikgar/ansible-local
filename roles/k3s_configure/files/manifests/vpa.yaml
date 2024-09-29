@@ -10,12 +10,28 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
+  name: vpa-selfsigned-issuer
+  namespace: kube-system
+spec:
+  isCA: true
+  commonName: vpa-selfsigned-issuer
+  secretName: vpa-ca-secret
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: vpa-selfsigned-issuer
+    kind: Issuer
+    group: cert-manager.io
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
   name: vpa
   namespace: kube-system
 spec:
   # Secret names are always required.
   secretName: vpa-tls-certs
-
   privateKey:
     algorithm: RSA
     encoding: PKCS1
@@ -28,33 +44,10 @@ spec:
   usages:
     - server auth
     - client auth
-
-  subject:
-    organizations:
-      - cert-manager
-
-  # Avoid using commonName for DNS names in end-entity (leaf) certificates. Unless you have a specific
-  # need for it in your environment, use dnsNames exclusively to avoid issues with commonName.
-  # Usually, commonName is used to give human-readable names to CA certificates and can be avoided for
-  # other certificates.
   commonName: vpa-webhook.kube-system.svc
-
-  # The literalSubject field is exclusive with subject and commonName. It allows
-  # specifying the subject directly as a string. This is useful for when the order
-  # of the subject fields is important or when the subject contains special types
-  # which can be specified by their OID.
-  #
-  # literalSubject: "O=jetstack, CN=example.com, 2.5.4.42=John, 2.5.4.4=Doe"
-
-  # At least one of commonName (possibly through literalSubject), dnsNames, uris, emailAddresses, ipAddresses or otherNames is required.
-  dnsNames:
-    - vpa-webhook.kube-system.svc
-    - vpa-webhook.kube-system.svc.cluster.local
-
-  # Issuer references are always required.
   issuerRef:
     name: vpa-selfsigned-issuer
-    kind: issuer
+    kind: Issuer
     group: cert-manager.io
 ---
 apiVersion: apiextensions.k8s.io/v1
