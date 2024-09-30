@@ -1374,7 +1374,13 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-          args: ["--v=4", "--stderrthreshold=info", "--reload-cert"]
+          args: 
+            - --v=4
+            - --stderrthreshold=info
+            - --reload-cert
+            - --tls-cert-file=/etc/tls-certs/tls.crt
+            - --tls-private-key=/etc/tls-certs/tls.key
+            - --client-ca-file=/etc/tls-certs/ca.crt
           volumeMounts:
             - name: tls-certs
               mountPath: "/etc/tls-certs"
