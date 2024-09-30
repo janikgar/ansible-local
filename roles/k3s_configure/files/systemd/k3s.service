@@ -38,7 +38,7 @@ ExecStart=/usr/local/bin/k3s \
         '--disable' \
         'coredns' \
         '--kubelet-arg' \
-        'system-reserved=cpu=1200m,memory=2048Mi' \
+        'system-reserved=cpu=1000m,memory=1792Mi' \
         '--kubelet-arg' \
         'protect-kernel-defaults' \
         'server' \
