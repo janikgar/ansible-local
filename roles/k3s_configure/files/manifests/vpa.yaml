@@ -1333,6 +1333,15 @@ spec:
       containers:
       - name: recommender
         image: registry.k8s.io/autoscaling/vpa-recommender:1.2.1
+        args:
+          - --v=4
+          - --storage=prometheus
+          - --metric-for-pod-labels=up{pod=~".+",container=~".+"}
+          - --pod-namespace-label=namespace
+          - --prometheus-address=http://prometheus-operator-kube-p-prometheus.prometheus.svc.cluster.local:9090
+          - --prometheus-cadvisor-job-name=kubelet
+          - --container-pod-name-label=pod
+          - --container-name-label=container
         imagePullPolicy: Always
         resources:
           limits:
