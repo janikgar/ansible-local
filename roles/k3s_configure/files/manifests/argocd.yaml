@@ -7,11 +7,11 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "7.5.2"
+  version: "7.6.8"
   valuesContent: |-
     global:
       image:
-        tag: v2.12.3
+        tag: v2.12.4
     applicationSet:
       resources:
         requests:
@@ -252,4 +252,35 @@ spec:
         trigger.on-is-deployed: |
           - when: app.status.sync.status == 'Synced' and app.status.health.status == 'Healthy'
             send: [app-version-notification, alertmanager-notification]
-
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: argocd-application-controller
+  namespace: argocd
+spec:
+  resourcePolicy:
+    containerPolicies:
+    - containerName: application-controller
+  targetRef:
+    apiVersion: apps/v1
+    kind: StatefulSet
+    name: argocd-application-controller
+  updatePolicy:
+    updateMode: Auto
+---
+apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: argocd-server
+  namespace: argocd
+spec:
+  resourcePolicy:
+    containerPolicies:
+    - containerName: server
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: argocd-server
+  updatePolicy:
+    updateMode: Auto
