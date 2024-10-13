@@ -1,0 +1,42 @@
+- name: Confirm config.txt is cleared from old location
+  ansible.builtin.file:
+    state: absent
+    dest: /boot/config.txt
+
+- name: Kernel checksum (if it changes)
+  failed_when: false
+  changed_when: false
+  register: kernel_file
+  ansible.builtin.stat:
+    path: /boot/firmware/kernel8_custom.img
+
+- name: Set kernel checksum fact
+  ansible.builtin.set_fact:
+    prior_kernel_checksum: "{{ kernel_file.checksum or 0 }}"
+
+- name: Update kernel line in config.txt
+  ansible.builtin.lineinfile:
+    path: /boot/firmware/config.txt
+    regexp: '^kernel='
+    line: 'kernel=kernel8_custom.img'
+
+- name: Add custom kernel
+  ansible.builtin.file:
+    src: files/kernel8_custom.img
+    dest: /boot/firmware/kernel8_custom.img
+    state: file
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: New kernel checksum
+  changed_when: false
+  register: new_kernel_file
+  ansible.builtin.stat:
+    path: /boot/firmware/kernel8_custom.img
+
+- name: Register if kernel has changed
+  changed_when: kernel_file.checksum != new_kernel_file.checksum
+  ansible.builtin.set_fact:
+    kernel_changed: "{{ kernel_file.checksum != new_kernel_file.checksum }}"
+  notify: "Reboot"
