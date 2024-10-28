@@ -45,6 +45,12 @@
       with_fileglob:
         - files/manifests/*.yaml
 
+    - name: Ensure /etc/rancher/k3s exists
+      ansible.builtin.file:
+        state: directory
+        dest: /etc/rancher/k3s
+        mode: 0755
+
     - name: Add OTEL config to leader
       ansible.builtin.copy:
         src: files/tracing/kubeapiserver-otlp.yaml
@@ -166,7 +172,7 @@
   ansible.builtin.file:
     state: directory
     path: /opt/cni
-    mode: '0755`'
+    mode: '0755'
 
 - name: Remove /opt/cni/bin
   ansible.builtin.file:
