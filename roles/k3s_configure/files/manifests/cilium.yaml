@@ -74,4 +74,3 @@ spec:
           - port-distribution
           - icmp
           - http
-    upgradeCompatibility: "1.15"

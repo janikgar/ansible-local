@@ -1,7 +1,6 @@
 ---
 - name: Check for Kube iptables
   ansible.builtin.shell: |
-    set -o pipefail
     iptables -S | egrep 'KUBE|CILIUM' | wc -l
   args:
     executable: /bin/bash

@@ -6,5 +6,5 @@ Description=Setup Raspberry Pi LEDs
 WantedBy=multi-user.target
 
 [Service]
-ExecStart=sh -c "echo cpu > /sys/class/leds/led0/trigger; echo mmc0 > /sys/class/leds/led1/trigger"
+ExecStart=sh -c "echo cpu > /sys/class/leds/PWR/trigger; echo mmc0 > /sys/class/leds/ACT/trigger"
 RemainAfterExit=true

@@ -20,3 +20,31 @@
     dest: /etc/motd
     owner: root
     mode: "0644"
+
+- name: Install zram-tools
+  ansible.builtin.apt:
+    package:
+      - zram-tools
+    state: present
+
+- name: Include zram module
+  community.general.system.modprobe:
+    name: zram
+    state: present
+
+- name: If zram is not present
+  when: not "zram0" in ansible_facts['devices'].keys()
+  block:
+    - name: Configure zram swap
+      ansible.builtin.copy:
+        dest: /etc/default/zramswap
+        mode: '0644'
+        content: |-
+          ALGO=lz4
+          PERCENT=50
+
+    - name: Start zramswap service
+      ansible.builtin.systemd:
+        service: zramswap
+        state: started
+        enabled: true

@@ -6,8 +6,8 @@
 - name: Check if K3s is installed
   ansible.builtin.command: test -x /usr/local/bin/k3s
   register: k3s_info
-  delegate_to: picluster-01.home.lan
   changed_when: false
+  failed_when: false
 
 - name: Register if we're installing K3s
   ansible.builtin.set_fact:
@@ -45,6 +45,12 @@
       with_fileglob:
         - files/manifests/*.yaml
 
+    - name: Ensure /etc/rancher/k3s exists
+      ansible.builtin.file:
+        state: directory
+        dest: /etc/rancher/k3s
+        mode: 0755
+
     - name: Add OTEL config to leader
       ansible.builtin.copy:
         src: files/tracing/kubeapiserver-otlp.yaml
@@ -75,26 +81,24 @@
       loop: "{{ groups['picluster_leader'] }}"
       changed_when: true
 
-    - name: Get leader token
-      ansible.builtin.command: cat /var/lib/rancher/k3s/server/token
-      register: new_local_token
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['picluster_leader'] }}"
-      run_once: true
-      changed_when: true
-
-    - name: Register leader token
-      ansible.builtin.set_fact:
-        new_token: "{{ new_local_token.results[0].stdout }}"
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['picluster_leader'] }}"
-      run_once: true
-
     - name: Wait to stabilize
       ansible.builtin.command: sleep 10
       delegate_to: 127.0.0.1
       become: false
       changed_when: false
+
+- name: Get leader token
+  ansible.builtin.command: cat /var/lib/rancher/k3s/server/token
+  register: new_local_token
+  delegate_to: picluster-01.home.lan
+  run_once: true
+  changed_when: true
+
+- name: Register leader token
+  ansible.builtin.set_fact:
+    new_token: "{{ new_local_token.stdout }}"
+  delegate_to: picluster-01.home.lan
+  run_once: true
 
 - name: Ensure SystemD services are up-to-date
   when: k3s_role == 'leader'
@@ -148,3 +152,39 @@
         INSTALL_K3S_VERSION: "{{ k3s_version }}"
       when: k3s_role == 'agent'
       changed_when: true
+
+- name: Remove /etc/cni/net.d
+  ansible.builtin.file:
+    state: absent
+    path: /etc/cni/net.d
+
+- name: Link new /etc/cni/net.d
+  ansible.builtin.file:
+    state: link
+    force: true
+    path: /etc/cni/net.d
+    src: /var/lib/rancher/k3s/agent/etc/cni/net.d
+  notify:
+    - Reload k3s systemd service
+    - Reload k3s-agent systemd service
+
+- name: Ensure /opt/cni exists
+  ansible.builtin.file:
+    state: directory
+    path: /opt/cni
+    mode: '0755'
+
+- name: Remove /opt/cni/bin
+  ansible.builtin.file:
+    state: absent
+    path: /opt/cni/bin
+
+- name: Link new /opt/cni/bin
+  ansible.builtin.file:
+    state: link
+    force: true
+    path: /opt/cni/bin
+    src: /var/lib/rancher/k3s/data/current/bin
+  notify:
+    - Reload k3s systemd service
+    - Reload k3s-agent systemd service

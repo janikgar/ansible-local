@@ -1,12 +1,4 @@
 ---
-- name: See if Node Exporter exists
-  ansible.builtin.service_facts:
-
-- name: Set Node Exporter status fact
-  ansible.builtin.set_fact:
-    node_exporter_enabled: |
-      {{ ['status'] | map('extract', ['node-exporter.service'] | map('extract', ansible_facts.services) | first) | first == 'enabled' }}
-
 - name: Get Node Exporter versions
   ansible.builtin.uri:
     url: https://api.github.com/repos/prometheus/node_exporter/tags
@@ -46,7 +38,7 @@
 
     - name: Download latest Node Exporter
       ansible.builtin.uri:
-        url: |
+        url: |-
           https://github.com/prometheus/node_exporter/releases/download/{{ nv }}/node_exporter-{{ nv[1:] }}.linux-{{ arch[ansible_facts.architecture] }}.tar.gz
         return_content: true
       register: node_exporter
@@ -58,12 +50,6 @@
         owner: root
         group: root
         mode: "0644"
-
-    - name: Stop Node Exporter service (if it exists)
-      ansible.builtin.service:
-        name: node-exporter
-        state: stopped
-      when: node_exporter_enabled
 
     - name: Ensure gzip / unzip are available
       ansible.builtin.apt:
