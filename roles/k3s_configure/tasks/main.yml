@@ -49,7 +49,7 @@
       ansible.builtin.file:
         state: directory
         dest: /etc/rancher/k3s
-        mode: 0755
+        mode: "0755"
 
     - name: Add OTEL config to leader
       ansible.builtin.copy:
@@ -134,7 +134,7 @@
     - name: Install servers
       ansible.builtin.command: |
         /tmp/k3s_install server \
-          --tls-san 192.1628.1.101 \
+          --tls-san 192.168.1.101 \
           --tls-san picluster-01.home.lan \
           --tls-san picluster-control.home.lan \
           --kube-apiserver-arg=tracing-config-file=
