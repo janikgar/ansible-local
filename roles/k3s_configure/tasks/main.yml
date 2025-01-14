@@ -137,7 +137,7 @@
           --tls-san 192.168.1.101 \
           --tls-san picluster-01.home.lan \
           --tls-san picluster-control.home.lan \
-          --kube-apiserver-arg=tracing-config-file=
+          --kube-apiserver-arg=tracing-config-file=/etc/rancher/k3s/kubeapiserver-otlp.yaml
       environment:
         K3S_TOKEN: "{{ new_token }}"
         INSTALL_K3S_VERSION: "{{ k3s_version }}"
