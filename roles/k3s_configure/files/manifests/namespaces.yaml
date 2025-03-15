@@ -13,3 +13,11 @@ metadata:
 spec:
   finalizers:
   - kubernetes
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: 1password
+spec:
+  finalizers:
+  - kubernetes

@@ -24,7 +24,7 @@ spec:
       mode: cluster-pool
       operator:
         clusterPoolIPv4PodCIDRList:
-        - 10.43.0.0/16
+        - 10.43.0.0/24
     operator:
       replicas: 1
       resources:
@@ -62,9 +62,9 @@ spec:
     tunnelProtocol: vxlan
     hubble:
       relay:
-        enabled: true
+        enabled: false
       ui:
-        enabled: true
+        enabled: false
       metrics:
         enabled:
           - dns

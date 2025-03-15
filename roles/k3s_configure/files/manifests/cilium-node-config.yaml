@@ -1,0 +1,14 @@
+# apiVersion: cilium.io/v2
+# kind: CiliumNodeConfig
+# metadata:
+#   namespace: kube-system
+#   name: netkit
+# spec:
+#   nodeSelector:
+#     matchLabels:
+#       io.cilium.migration/netkit: "true"
+#   defaults:
+#     routing-mode: native
+#     datapath-mode: netkit
+#     enable-bpf-masquerade: "true"
+#     ipv4-native-routing-cidr: "10.44.0.0/24"
