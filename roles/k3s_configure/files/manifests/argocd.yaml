@@ -7,11 +7,11 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "7.7.11"
+  version: "7.8.14"
   valuesContent: |-
     global:
       image:
-        tag: v2.13.2
+        tag: v2.14.8
     applicationSet:
       resources:
         requests:
@@ -184,7 +184,7 @@ spec:
           cpu: 20m
           memory: 64Mi
       image:
-        tag: 7.4.1-alpine
+        tag: 7.4.2-alpine
         imagePullPolicy: Always
       metrics:
         enabled: true
