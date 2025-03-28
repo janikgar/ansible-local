@@ -79,6 +79,8 @@ spec:
             - '*'
             kinds:
               - Job
+              - ReplicaSet
+              - Pod
               - CiliumEndpoint
               - EndpointSlice
               - ComponentStatus
