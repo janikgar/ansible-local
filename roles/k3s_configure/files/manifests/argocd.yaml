@@ -7,11 +7,8 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "7.8.14"
+  version: "8.1.2"
   valuesContent: |-
-    global:
-      image:
-        tag: v2.14.8
     applicationSet:
       resources:
         requests:
@@ -51,25 +48,19 @@ spec:
         exec.enabled: "false"
         resource.compareoptions: |
           ignoreDifferencesOnResourceUpdates: true
-        resource.customizations.ignoreResourceUpdates.EndpointSlice: |
-          jsonPointers:
-            - /
         resource.customizations.ignoreResourceUpdates.Job: |
           jsonPointers:
             - /
         resource.customizations.ignoreResourceUpdates.all: |
           jsonPointers:
             - /status
+            - /spec/preserveUnknownFields
         resource.customizations.ignoreResourceUpdates.argoproj.io_Application: |
           jsonPointers:
             - /metadata/generation
             - /metadata/resourceVersion
-        resource.customizations.ignoreResourceUpdates.cilium.io: |
-          jsonPointers:
-            - /
         resource.exclusions: |
           - apiGroups:
-            - cilium.io
             - k3s.cattle.io
             - helm.cattle.io
             - upgrade.cattle.io
@@ -81,8 +72,6 @@ spec:
               - Job
               - ReplicaSet
               - Pod
-              - CiliumEndpoint
-              - EndpointSlice
               - ComponentStatus
         resource.ignoreResourceUpdatesEnabled: "true"
         server.rbac.log.enforce.enable: "false"
@@ -111,7 +100,7 @@ spec:
           cpu: 10m
           memory: 50Mi
         limits:
-          cpu: 100m
+          cpu: 400m
           memory: 200Mi
       ingress:
         enabled: true
@@ -132,7 +121,7 @@ spec:
           memory: 256Mi
         limits:
           cpu: 600m
-          memory: 512Mi
+          memory: 768Mi
       metrics:
         enabled: true
         serviceMonitor:
