@@ -44,6 +44,8 @@
         mode: "0400"
       with_fileglob:
         - files/manifests/*.yaml
+      tags:
+        - manifests
 
     - name: Ensure /etc/rancher/k3s exists
       ansible.builtin.file:
