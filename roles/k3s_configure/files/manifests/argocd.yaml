@@ -110,6 +110,7 @@ spec:
         annotations:
           cert-manager.io/cluster-issuer: vault-issuer
           cert-manager.io/common-name: argocd.home.lan
+          cert-manager.io/revision-history-limit: "1"
       metrics:
         enabled: true
         serviceMonitor:
