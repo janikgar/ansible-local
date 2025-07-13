@@ -34,17 +34,17 @@ spec:
         dex.config: |
           connectors:
           - config:
-              issuer: https://authentik.home.lan/application/o/argocd/
-              clientID: 658578a26fd391df56029e6d61c0d537a9358cb4
-              clientSecret: $dex.authentik.clientSecret
+              issuer: https://vault.home.lan/v1/identity/oidc/provider/default
+              clientID: NomDBxj3AiMhgE6zFDeUfxnpbR6U3W4S
+              clientSecret: $dex.vault.clientSecret
               insecureEnableGroups: true
+              insecureSkipEmailVerified: true 
               scopes:
-              - openid
               - profile
               - email
-            name: authentik
+            name: vault
             type: oidc
-            id: authentik
+            id: vault
         exec.enabled: "false"
         resource.compareoptions: |
           ignoreDifferencesOnResourceUpdates: true
