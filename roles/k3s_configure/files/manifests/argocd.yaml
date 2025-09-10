@@ -128,6 +128,17 @@ spec:
         serviceMonitor:
           enabled: true
     controller:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                      - picluster-02.home.lan
+                      - picluster-03.home.lan
+                      - picluster-04.home.lan
       resources:
         requests:
           cpu: 100m
