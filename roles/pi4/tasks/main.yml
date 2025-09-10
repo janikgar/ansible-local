@@ -28,7 +28,7 @@
     state: present
 
 - name: Include zram module
-  community.general.system.modprobe:
+  community.general.modprobe:
     name: zram
     state: present
 

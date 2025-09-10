@@ -12,6 +12,7 @@
     - open-iscsi
     - snmpd
     - snmp-mibs-downloader
+    - nfs-common
 
 - name: Upgrade packages with rescue
   block:
