@@ -36,6 +36,11 @@
           aarch64: arm64
           i386: "386"
 
+    - name: Debug Node Exporter
+      debug:
+        msg: |-
+          https://github.com/prometheus/node_exporter/releases/download/{{ nv }}/node_exporter-{{ nv[1:] }}.linux-{{ arch[ansible_facts.architecture] }}.tar.gz
+
     - name: Download latest Node Exporter
       ansible.builtin.uri:
         url: |-

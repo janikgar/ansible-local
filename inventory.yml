@@ -19,7 +19,7 @@ all:
         picluster-03.home.lan:
           ansible_host: 192.168.1.103
         picluster-04.home.lan:
-          ansible_host: 192.168.1.104
+          ansible_host: 192.168.1.117
       vars:
         k3s_role: agent
     linux:
