@@ -5,7 +5,7 @@ all:
     picluster_leader:
       hosts:
         picluster-01.home.lan:
-          ansible_host: 192.168.1.101
+          ansible_host: 192.168.1.80
       vars:
         k3s_role: leader
     picluster_server:
@@ -15,11 +15,11 @@ all:
     picluster_agent:
       hosts:
         picluster-02.home.lan:
-          ansible_host: 192.168.1.102
+          ansible_host: 192.168.1.199
         picluster-03.home.lan:
-          ansible_host: 192.168.1.103
+          ansible_host: 192.168.1.250
         picluster-04.home.lan:
-          ansible_host: 192.168.1.117
+          ansible_host: 192.168.1.118
       vars:
         k3s_role: agent
     linux:
