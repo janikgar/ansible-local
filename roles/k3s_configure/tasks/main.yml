@@ -53,13 +53,17 @@
         dest: /etc/rancher/k3s
         mode: "0755"
 
-    - name: Add OTEL config to leader
+    - name: Add K3s-specific config to leader
       ansible.builtin.copy:
-        src: files/tracing/kubeapiserver-otlp.yaml
-        dest: "/etc/rancher/k3s/kubeapiserver-otlp.yaml"
+        src: "{{ item }}"
+        dest: "/etc/rancher/k3s/"
         owner: root
         group: root
         mode: "0400"
+      with_fileglob:
+        - files/k3s_config/*.yaml
+      tags:
+        - manifests
 
 - name: Tasks to initialize leader
   when: k3s_role == 'leader' and new_k3s_install
@@ -136,7 +140,7 @@
     - name: Install servers
       ansible.builtin.command: |
         /tmp/k3s_install server \
-          --tls-san 192.168.1.101 \
+          --tls-san 192.168.1.80 \
           --tls-san picluster-01.home.lan \
           --tls-san picluster-control.home.lan \
           --kube-apiserver-arg=tracing-config-file=/etc/rancher/k3s/kubeapiserver-otlp.yaml
@@ -149,7 +153,7 @@
     - name: Install agents
       ansible.builtin.command: /tmp/k3s_install agent
       environment:
-        K3S_URL: "https://192.168.1.101:6443"
+        K3S_URL: "https://192.168.1.80:6443"
         K3S_TOKEN: "{{ new_token }}"
         INSTALL_K3S_VERSION: "{{ k3s_version }}"
       when: k3s_role == 'agent'
