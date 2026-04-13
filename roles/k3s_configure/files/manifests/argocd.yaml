@@ -7,7 +7,7 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "8.1.2"
+  version: "8.6.0"
   valuesContent: |-
     applicationSet:
       resources:
@@ -102,6 +102,29 @@ spec:
         limits:
           cpu: 400m
           memory: 200Mi
+      httproute:
+        enabled: true
+        parentRefs: &gtw
+          - name: default-gateway
+            namespace: kube-system
+            sectionName: https-2
+        hostnames: &hnm
+          - argocd.gw.home.lan
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+      grpcroute:
+        enabled: true
+        parentRefs: *gtw
+        hostnames: *hnm
+        rules:
+          - matches:
+              - headers:
+                - name: Content-Type
+                  type: RegularExpression
+                  value: "^application/grpc.*$"
       ingress:
         enabled: true
         ingressClassName: nginx
