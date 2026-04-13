@@ -8,7 +8,7 @@ spec:
   repo: https://helm.cilium.io
   chart: cilium
   targetNamespace: kube-system
-  version: "1.17.5"
+  version: "1.17.14"
   valuesContent: |-
     bpf:
       hostLegacyRouting: false
@@ -43,6 +43,8 @@ spec:
     kubeProxyReplacement: true
     k8sServiceHost: 192.168.1.80
     k8sServicePort: 6443
+    nodeIPAM:
+      enabled: true
     operator:
       replicas: 1
       resources:
