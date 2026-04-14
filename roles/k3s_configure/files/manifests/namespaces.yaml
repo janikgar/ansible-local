@@ -9,14 +9,6 @@ spec:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: nginx
-spec:
-  finalizers:
-  - kubernetes
----
-apiVersion: v1
-kind: Namespace
-metadata:
   name: 1password
 spec:
   finalizers:
