@@ -37,6 +37,10 @@ ExecStart=/usr/local/bin/k3s \
         'traefik' \
         '--disable' \
         'coredns' \
+        '--disable' \
+        'servicelb' \
+        '--disable' \
+        'networkpolicy' \
         '--kubelet-arg' \
         'config=/etc/rancher/k3s/kubelet.yaml' \
         '--kube-apiserver-arg=tracing-config-file=/etc/rancher/k3s/kubeapiserver-otlp.yaml'

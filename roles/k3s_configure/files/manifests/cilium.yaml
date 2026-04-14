@@ -8,7 +8,7 @@ spec:
   repo: https://helm.cilium.io
   chart: cilium
   targetNamespace: kube-system
-  version: "1.17.14"
+  version: "1.18.8"
   valuesContent: |-
     bpf:
       hostLegacyRouting: false
@@ -20,6 +20,7 @@ spec:
       hostConfDirMountPath: /host/var/lib/rancher/k3s/agent/etc/cni/net.d
       binPath: /var/lib/rancher/k3s/data/current/bin
       uninstall: false
+    defaultLBServiceIPAM: lbipam
     envoy:
       enabled: true
       securityContext:
@@ -34,17 +35,25 @@ spec:
       gatewayClass:
         create: "true"
       hostNetwork:
-        enabled: true
+        enabled: false
+    ingressController:
+      enabled: true
+      loadBalancerMode: shared
     ipam:
       mode: cluster-pool
       operator:
         clusterPoolIPv4PodCIDRList:
         - 10.43.0.0/24
     kubeProxyReplacement: true
+    k8sClientRateLimit:
+      qps: 15
+      burst: 20
     k8sServiceHost: 192.168.1.80
     k8sServicePort: 6443
-    nodeIPAM:
+    l2announcements:
       enabled: true
+    nodeIPAM:
+      enabled: false
     operator:
       replicas: 1
       resources:
@@ -52,7 +61,7 @@ spec:
           cpu: 15m
           memory: 64Mi
         limits:
-          cpu: 50m
+          cpu: 150m
           memory: 128Mi
       unmanagedPodWatcher:
         restart: true
@@ -79,6 +88,7 @@ spec:
         name: cilium-operator
     tunnelPort: 8473
     tunnelProtocol: vxlan
+    upgradeCompatibility: "1.17"
     hubble:
       relay:
         enabled: false
@@ -93,3 +103,51 @@ spec:
           - port-distribution
           - icmp
           - http
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: node-gateway-class
+spec:
+  controllerName: io.cilium/gateway-controller
+  description: Non default gateway class to use node ipam.
+  parametersRef:
+    group: cilium.io
+    kind: CiliumGatewayClassConfig
+    name: node-gateway-config
+    namespace: kube-system
+---
+apiVersion: cilium.io/v2alpha1
+kind: CiliumGatewayClassConfig
+metadata:
+  name: node-gateway-config
+  namespace: kube-system
+spec:
+  service:
+    loadBalancerClass: io.cilium/node
+    type: LoadBalancer
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: "node-l2"
+spec:
+  blocks:
+  - start: 192.168.1.100
+    stop: 192.168.1.200
+  serviceSelector:
+    matchExpressions:
+      - key: io.cilium.gateway/owning-gateway
+        operator: Exists
+---
+apiVersion: "cilium.io/v2alpha1"
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: l2-policy
+spec:
+  externalIPs: true
+  loadBalancerIPs: true
+  serviceSelector:
+    matchExpressions:
+      - key: io.cilium.gateway/owning-gateway
+        operator: Exists
