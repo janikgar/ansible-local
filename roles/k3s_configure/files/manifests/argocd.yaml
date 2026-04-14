@@ -127,7 +127,7 @@ spec:
                   value: "^application/grpc.*$"
       ingress:
         enabled: true
-        ingressClassName: nginx
+        ingressClassName: cilium
         hostname: argocd.home.lan
         tls: enabled
         annotations:
