@@ -115,6 +115,9 @@ spec:
               - path:
                   type: PathPrefix
                   value: /
+            backendRefs:
+              - name: argocd-server
+                port: 443
       grpcroute:
         enabled: true
         parentRefs: *gtw
@@ -125,6 +128,9 @@ spec:
                 - name: Content-Type
                   type: RegularExpression
                   value: "^application/grpc.*$"
+            backendRefs:
+              - name: argocd-server
+                port: 443
       ingress:
         enabled: true
         ingressClassName: cilium
