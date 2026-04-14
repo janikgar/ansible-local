@@ -135,10 +135,6 @@ spec:
   blocks:
   - start: 192.168.1.100
     stop: 192.168.1.200
-  serviceSelector:
-    matchExpressions:
-      - key: io.cilium.gateway/owning-gateway
-        operator: Exists
 ---
 apiVersion: "cilium.io/v2alpha1"
 kind: CiliumL2AnnouncementPolicy
@@ -147,7 +143,3 @@ metadata:
 spec:
   externalIPs: true
   loadBalancerIPs: true
-  serviceSelector:
-    matchExpressions:
-      - key: io.cilium.gateway/owning-gateway
-        operator: Exists
