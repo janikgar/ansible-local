@@ -109,7 +109,7 @@ spec:
             namespace: kube-system
             sectionName: https-2
         hostnames: &hnm
-          - argocd.gw.home.lan
+          - argocd.home.lan
         rules:
           - matches:
               - path:
@@ -132,14 +132,7 @@ spec:
               - name: argocd-server
                 port: 443
       ingress:
-        enabled: true
-        ingressClassName: cilium
-        hostname: argocd.home.lan
-        tls: enabled
-        annotations:
-          cert-manager.io/cluster-issuer: vault-issuer
-          cert-manager.io/common-name: argocd.home.lan
-          cert-manager.io/revision-history-limit: "1"
+        enabled: false
       metrics:
         enabled: true
         serviceMonitor:
