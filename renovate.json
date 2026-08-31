@@ -6,6 +6,7 @@
   "packageRules": [
     {
       "description": "Make minor versions breaking changes",
+      "matchDatasources": ["helm"],
       "matchPackageNames": [
         "argo-cd",
         "cilium"
