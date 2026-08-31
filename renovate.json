@@ -15,7 +15,7 @@
         "^\\s+repo: (?<registryUrl>.*?)",
         "^\\s+chart: (?<packageName>.*?)"
       ],
-      "datasource": "helm"
+      "datasourceTemplate": "helm"
     }
   ]
 }
