@@ -7,10 +7,6 @@
     {
       "description": "Make minor versions breaking changes",
       "matchDatasources": ["helm"],
-      "matchPackageNames": [
-        "argo-cd",
-        "cilium"
-      ],
       "allowedVersions": "<={{ add minor 1 }}"
     }
   ],
