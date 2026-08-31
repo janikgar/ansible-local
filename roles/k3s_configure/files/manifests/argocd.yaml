@@ -21,6 +21,7 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
+          interval: 60s
       readinessProbe:
         enabled: true
       livenessProbe:
@@ -97,11 +98,11 @@ spec:
       url: https://argocd.home.lan
       resources:
         requests:
-          cpu: 10m
+          cpu: 25m
           memory: 50Mi
         limits:
           cpu: 400m
-          memory: 200Mi
+          memory: 256Mi
       httproute:
         enabled: true
         parentRefs: &gtw
@@ -137,6 +138,7 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
+          interval: 60s
     repoServer:
       resources:
         requests:
@@ -149,6 +151,7 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
+          interval: 60s
     controller:
       affinity:
         nodeAffinity:
@@ -163,8 +166,8 @@ spec:
                       - picluster-04.home.lan
       resources:
         requests:
-          cpu: 100m
-          memory: 512Mi
+          cpu: 380m
+          memory: 991Mi
         limits:
           cpu: 500m
           memory: 1024Mi
@@ -172,6 +175,7 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
+          interval: 60s
     dex:
       initImage:
         resources:
@@ -196,6 +200,7 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
+          interval: 60s
       livenessProbe:
         enabled: true
       readinessProbe:
@@ -215,6 +220,7 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
+          interval: 60s
       readinessProbe:
         enabled: true
       livenessProbe:
@@ -244,16 +250,35 @@ spec:
           cpu: 25m
           memory: 128Mi
       notifiers:
-        service.webhook.consul-app-version: |
-          url: https://consul.home.lan/v1/kv/
-        service.alertmanager: |
-          targets:
-            - alertmanager-operated.prometheus.svc.cluster.local:9093
+        service.webhook.slack_webhook: |
+          url: $discord-webhook
       metrics:
         enabled: true
         serviceMonitor:
           enabled: true
+          interval: 60s
       templates:
+        template.send-slack: |
+          webhook:
+            slack_webhook:
+              method: POST
+              body: |
+                {
+                  "attachments": [{
+                    "title": "{{.app.metadata.name}}",
+                    "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+                    "color": "#18be52",
+                    "fields": [{
+                      "title": "Sync Status",
+                      "value": "{{.app.status.sync.status}}",
+                      "short": true
+                    }, {
+                      "title": "Repository",
+                      "value": "{{.app.spec.source.repoURL}}",
+                      "short": true
+                    }]
+                  }]
+                }
         template.alertmanager-notification: |
           message: "Application {{.app.metadata.name}} has update. Status: {{.app.status.sync.status}}, Health: {{.app.status.health.status}}"
           alertmanager:
@@ -266,17 +291,10 @@ spec:
               status: "{{.app.status.sync.status}}"
               health: "{{.app.status.health.status}}"
               revision: "{{.app.status.sync.revision}}"
-        template.app-version-notification: |
-          webhook:
-            consul-app-version:
-              method: PUT
-              path: /argocd-versions/{{.app.metadata.name}}
-              body: |
-                {"deployed_version": "{{.app.status.sync.revision}}"}
       triggers:
         trigger.on-is-deployed: |
           - when: app.status.sync.status == 'Synced' and app.status.health.status == 'Healthy'
-            send: [app-version-notification, alertmanager-notification]
+            send: [send-slack]
 ---
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
