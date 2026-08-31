@@ -3,9 +3,18 @@
   "extends": [
     "config:recommended"
   ],
-  "helmv3": {
-    "managerFilePatterns": [
-      "/manifests/.*\\.yaml/"
-    ]
-  }
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/manifests/.*\\.yaml"
+      ],
+      "matchStringsStrategy": "combination",
+      "matchStrings": [
+        "^\\s+version: (?:|\")(?<currentValue>.*?)(?:|\")",
+        "^\\s+repo: (?<registryUrl>.*?)",
+        "^\\s+chart: (?<packageName>.*?)"
+      ]
+    }
+  ]
 }
