@@ -5,17 +5,14 @@
   ],
   "customManagers": [
     {
-      "customType": "regex",
+      "customType": "jsonata",
+      "fileFormat": "yaml",
       "managerFilePatterns": [
         "/manifests/.*\\.yaml"
       ],
-      "matchStringsStrategy": "combination",
       "matchStrings": [
-        "\\s+version: (?:|\")(?<currentValue>.*?)(?:|\")",
-        "\\s+repo: (?<registryUrl>.*?)",
-        "\\s+chart: (?<packageName>.*?)"
-      ],
-      "datasourceTemplate": "helm"
+        "spec.{ \"depName\": chart, \"currentValue\": version, \"registryUrl\": repo}"
+      ]
     }
   ]
 }
