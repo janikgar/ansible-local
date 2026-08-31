@@ -3,6 +3,16 @@
   "extends": [
     "config:recommended"
   ],
+  "packageRules": [
+    {
+      "description": "Make minor versions breaking changes",
+      "matchPackageNames": [
+        "argocd",
+        "cilium"
+      ],
+      "allowedVersions": "<={{ add minor 1 }}"
+    }
+  ],
   "customManagers": [
     {
       "customType": "jsonata",
