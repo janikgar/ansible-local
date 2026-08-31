@@ -8,7 +8,7 @@
       "customType": "jsonata",
       "fileFormat": "yaml",
       "managerFilePatterns": [
-        "/manifests/.*\\.yaml"
+        "**/manifests/*.yaml"
       ],
       "matchStrings": [
         "spec.{ \"depName\": chart, \"currentValue\": version, \"registryUrl\": repo}"
