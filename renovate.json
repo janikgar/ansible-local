@@ -12,7 +12,8 @@
       ],
       "matchStrings": [
         "spec.{ \"depName\": chart, \"currentValue\": version, \"registryUrl\": repo}"
-      ]
+      ],
+      "datasourceTemplate": "helm"
     }
   ]
 }
