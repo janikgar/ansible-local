@@ -3,13 +3,6 @@
   "extends": [
     "config:recommended"
   ],
-  "packageRules": [
-    {
-      "description": "Make minor versions breaking changes",
-      "matchDatasources": ["helm"],
-      "allowedVersions": "<={{ add minor 1 }}"
-    }
-  ],
   "customManagers": [
     {
       "customType": "jsonata",
