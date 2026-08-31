@@ -11,9 +11,9 @@
       ],
       "matchStringsStrategy": "combination",
       "matchStrings": [
-        "^\\s+version: (?:|\")(?<currentValue>.*?)(?:|\")",
-        "^\\s+repo: (?<registryUrl>.*?)",
-        "^\\s+chart: (?<packageName>.*?)"
+        "\\s+version: (?:|\")(?<currentValue>.*?)(?:|\")",
+        "\\s+repo: (?<registryUrl>.*?)",
+        "\\s+chart: (?<packageName>.*?)"
       ],
       "datasourceTemplate": "helm"
     }
