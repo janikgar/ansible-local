@@ -14,7 +14,8 @@
         "^\\s+version: (?:|\")(?<currentValue>.*?)(?:|\")",
         "^\\s+repo: (?<registryUrl>.*?)",
         "^\\s+chart: (?<packageName>.*?)"
-      ]
+      ],
+      "datasource": "helm"
     }
   ]
 }
