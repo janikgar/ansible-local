@@ -7,7 +7,7 @@
     {
       "description": "Make minor versions breaking changes",
       "matchPackageNames": [
-        "argocd",
+        "argo-cd",
         "cilium"
       ],
       "allowedVersions": "<={{ add minor 1 }}"
