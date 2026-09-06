@@ -46,6 +46,18 @@ spec:
             name: vault
             type: oidc
             id: vault
+          - config:
+              issuer: https://j-squared.synology.me:5081/webman/sso
+              clientID: 5e2f3a4aaeaa01cae21a1a538d56f7e6
+              clientSecret: $dex.syno.clientSecret
+              insecureEnableGroups: true
+              insecureSkipEmailVerified: true 
+              scopes:
+              - profile
+              - email
+            name: syno
+            type: oidc
+            id: syno
         exec.enabled: "false"
         resource.compareoptions: |
           ignoreDifferencesOnResourceUpdates: true
