@@ -35,23 +35,12 @@ spec:
         dex.config: |
           connectors:
           - config:
-              issuer: https://vault.home.lan/v1/identity/oidc/provider/default
-              clientID: NomDBxj3AiMhgE6zFDeUfxnpbR6U3W4S
-              clientSecret: $dex.vault.clientSecret
-              insecureEnableGroups: true
-              insecureSkipEmailVerified: true 
-              scopes:
-              - profile
-              - email
-            name: vault
-            type: oidc
-            id: vault
-          - config:
               issuer: https://j-squared.synology.me:5081/webman/sso
               clientID: 5e2f3a4aaeaa01cae21a1a538d56f7e6
               clientSecret: $dex.syno.clientSecret
               insecureEnableGroups: true
               insecureSkipEmailVerified: true 
+              userNameKey: sub
               scopes:
               - profile
               - email
@@ -90,7 +79,7 @@ spec:
         server.rbac.log.enforce.enable: "false"
         timeout.hard.reconciliation: 0s
         timeout.reconciliation: 180s
-        url: https://argocd.home.lan
+        url: https://argocd.tailc6343.ts.net
       params:
         create: true
         controller.server.side.diff.enabled: "true"
@@ -105,9 +94,11 @@ spec:
           p, role:org-admin, logs, *, */*, allow
           p, role:org-admin, exec, *, */*, allow
           g, project_admin, role:org-admin
+          g, janikgar, role:org-admin
+          g, jlr047, role:org-admin
           p, backstage, applications, get, */*, allow
     server:
-      url: https://argocd.home.lan
+      url: https://argocd.tailc6343.ts.net
       resources:
         requests:
           cpu: 25m

@@ -37,7 +37,7 @@ spec:
       hostNetwork:
         enabled: false
     ingressController:
-      enabled: true
+      enabled: false
       loadBalancerMode: shared
     ipam:
       mode: cluster-pool
