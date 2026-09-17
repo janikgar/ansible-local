@@ -106,37 +106,6 @@ spec:
         limits:
           cpu: 400m
           memory: 256Mi
-      httproute:
-        enabled: true
-        parentRefs: &gtw
-          - name: default-gateway
-            namespace: kube-system
-            sectionName: https-2
-        hostnames: &hnm
-          - argocd.home.lan
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: argocd-server
-                port: 443
-      grpcroute:
-        enabled: true
-        parentRefs: *gtw
-        hostnames: *hnm
-        rules:
-          - matches:
-              - headers:
-                - name: Content-Type
-                  type: RegularExpression
-                  value: "^application/grpc.*$"
-            backendRefs:
-              - name: argocd-server
-                port: 443
-      ingress:
-        enabled: false
       metrics:
         enabled: true
         serviceMonitor:
@@ -298,35 +267,3 @@ spec:
         trigger.on-is-deployed: |
           - when: app.status.sync.status == 'Synced' and app.status.health.status == 'Healthy'
             send: [send-slack]
----
-apiVersion: autoscaling.k8s.io/v1
-kind: VerticalPodAutoscaler
-metadata:
-  name: argocd-application-controller
-  namespace: argocd
-spec:
-  resourcePolicy:
-    containerPolicies:
-    - containerName: application-controller
-  targetRef:
-    apiVersion: apps/v1
-    kind: StatefulSet
-    name: argocd-application-controller
-  updatePolicy:
-    updateMode: Auto
----
-apiVersion: autoscaling.k8s.io/v1
-kind: VerticalPodAutoscaler
-metadata:
-  name: argocd-server
-  namespace: argocd
-spec:
-  resourcePolicy:
-    containerPolicies:
-    - containerName: server
-  targetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: argocd-server
-  updatePolicy:
-    updateMode: Auto
