@@ -7,8 +7,11 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "8.6.4"
+  version: "10.9.2"
   valuesContent: |-
+    global:
+      networkPolicy:
+        create: false
     applicationSet:
       resources:
         requests:
@@ -124,6 +127,10 @@ spec:
         serviceMonitor:
           enabled: true
           interval: 60s
+      livenessProbe:
+        enabled: true
+      readinessProbe:
+        enabled: true
     controller:
       affinity:
         nodeAffinity:
