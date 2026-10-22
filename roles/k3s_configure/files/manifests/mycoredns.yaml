@@ -74,6 +74,12 @@ data:
         loadbalance
         import /etc/coredns/custom/*.override
     }
+    ts.net:53 {
+      log
+      errors
+      cache 30
+      forward . 10.43.177.79
+    }
     import /etc/coredns/custom/*.server
 ---
 apiVersion: apps/v1
