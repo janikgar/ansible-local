@@ -75,7 +75,6 @@ data:
         import /etc/coredns/custom/*.override
     }
     ts.net:53 {
-      log
       errors
       cache 30
       forward . 10.43.177.79
