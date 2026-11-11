@@ -7,7 +7,7 @@ spec:
   repo: https://argoproj.github.io/argo-helm
   chart: argo-cd
   targetNamespace: argocd
-  version: "10.14.0"
+  version: "10.18.0"
   valuesContent: |-
     global:
       networkPolicy:
