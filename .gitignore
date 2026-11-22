@@ -1,2 +1,4 @@
 *.log
 .vault-pass
+result
+result/
